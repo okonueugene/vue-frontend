@@ -1,6 +1,4 @@
 <template>
-  <router-link to="/dashboard">Dashboard</router-link>
-
   <section class="vh-100">
     <div class="container-fluid h-custom">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -110,7 +108,10 @@ export default {
         });
         console.log(response);
         if (response.status === 200) {
-          localStorage.setItem("isAuthenticated", true); // add this line
+          localStorage.setItem("isAuthenticated", true);
+          const token = response.data.access_token;
+          console.log(token);
+          localStorage.setItem("token", token);
           this.$router.push("/dashboard");
         } else {
           this.error = response.data.message;
