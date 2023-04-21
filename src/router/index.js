@@ -27,12 +27,11 @@ const routes = [
         next();
       } else {
         // Redirect to the login page if the user is not authenticated
-        next("/login?redirect=/dashboard");
+        next("/");
       }
     }
   }
 ];
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes

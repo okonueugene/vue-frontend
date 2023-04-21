@@ -20,7 +20,6 @@
                       placeholder="First Name"
                     />
                   </div>
-                  ?redirect=/dashboard
                   <div class="col-sm-6">
                     <input
                       type="text"

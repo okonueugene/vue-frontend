@@ -32,7 +32,9 @@
                 class="form-control form-control-lg"
                 placeholder="Enter a valid email address"
               />
-              <label class="form-label" for="form3Example3">Email address</label>
+              <label class="form-label" for="form3Example3"
+                >Email address</label
+              >
             </div>
 
             <!-- Password input -->
@@ -73,7 +75,9 @@
               </button>
               <p class="small fw-bold mt-2 pt-1 mb-0">
                 Don't have an account?
-                <a id="register" href="/register" class="link-danger">Register</a>
+                <a id="register" href="/register" class="link-danger"
+                  >Register</a
+                >
               </p>
             </div>
           </form>
@@ -81,12 +85,10 @@
         </div>
       </div>
     </div>
-    
   </section>
 </template>
 
 <script>
-
 import axios from "axios";
 
 export default {
@@ -94,7 +96,7 @@ export default {
     return {
       email: "",
       password: "",
-      error: "",
+      error: ""
     };
   },
   methods: {
@@ -104,39 +106,39 @@ export default {
         var url = "http://" + ip + ":" + 8000 + "/api/login";
         const response = await axios.post(url, {
           email_address: this.email,
-          password: this.password,
+          password: this.password
         });
         console.log(response);
         if (response.status === 200) {
-          this.$router.push('/dashboard')}
-       else {
+          localStorage.setItem("isAuthenticated", true); // add this line
+          this.$router.push("/dashboard");
+        } else {
           this.error = response.data.message;
         }
       } catch (error) {
         console.log(error);
         this.error = error.response.data.message;
       }
-    },
-  },
+    }
+  }
 };
 </script>
-
 
 <style scoped>
 .divider:after,
 .divider:before {
-content: "";
-flex: 1;
-height: 1px;
-background: #d9d9d9;
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #d9d9d9;
 }
 
 .h-custom {
-height: calc(100% - 73px);
+  height: calc(100% - 73px);
 }
 @media (max-width: 450px) {
-.h-custom {
-height: 100%;
-}
+  .h-custom {
+    height: 100%;
+  }
 }
 </style>
