@@ -51,6 +51,7 @@
                         class="form-control form-control-user"
                         id="exampleInputPassword"
                         placeholder="Password"
+                        v-model="password"
                         required
                       />
                     </div>
@@ -60,6 +61,7 @@
                         class="form-control form-control-user"
                         id="exampleRepeatPassword"
                         placeholder="Repeat Password"
+                        v-model="passwordConfirmed"
                         required
                       />
                     </div>
@@ -74,6 +76,9 @@
 
               <div class="text-center">
                 <a class="small" href="/">Already have an account? Login!</a>
+              </div>
+              <div class="text-danger text-center" v-if="errorMessage">
+                {{ errorMessage }}
               </div>
             </div>
           </div>
@@ -97,23 +102,36 @@ export default {
       email: "",
       password: "",
       passwordConfirmed: "",
-      error: ""
+      name: "",
+      errorMessage: ""
     };
   },
   methods: {
     async register() {
+      if (this.password !== this.passwordConfirmed) {
+        this.errorMessage =
+          "The password and confirmation password do not match.";
+        return;
+      }
+
       try {
         const ip = window.location.hostname;
         const url = `http://${ip}:8000/api/register`;
         const response = await axios.post(url, {
-          name: this.firstName + " " + this.lastName,
+          name: `${this.firstName} ${this.lastName}`,
           email_address: this.email,
           password: this.password,
           password_confirmed: this.passwordConfirmed
         });
         this.$router.push("/");
       } catch (error) {
-        this.error = error.response.data.message;
+        if (error.response.data.email_address) {
+          this.errorMessage = error.response.data.email_address[0];
+        } else {
+          this.errorMessage =
+            "An error occurred while registering. Please try again.";
+        }
+        console.log(error.response.data.email_address);
       }
     }
   }
