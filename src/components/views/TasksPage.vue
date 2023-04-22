@@ -448,8 +448,7 @@ export default {
       try {
         const token = localStorage.getItem("token"); // Get the token from local storage
         const ip = window.location.hostname;
-        var url = "http://" + ip + ":" + 8000 + "/api/tasks";
-
+        var url = "http://" + ip + ":" + 8000 + "api/task/tasks";
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}` // Set the token in the Authorization header

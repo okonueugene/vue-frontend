@@ -226,6 +226,7 @@
                     class="close"
                     data-dismiss="modal"
                     aria-label="Close"
+                    @click="closeAddStatusModal()"
                   >
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -248,6 +249,7 @@
                     type="button"
                     class="btn btn-secondary"
                     data-dismiss="modal"
+                    @click="closeAddStatusModal()"
                   >
                     Cancel
                   </button>
@@ -289,25 +291,22 @@ export default {
   data() {
     return {
       statusList: [], // array of statuses
-      pageSize: 10, // number of statuses per page
+      pageSize: 5, // number of statuses per page
       currentPage: 1, // current page number
       newStatus: { name: "" }, // new status object
       error: null // error message
     };
   },
   computed: {
-    totalStatuses() {
-      return this.statusList.length;
-    },
     displayedStatusList() {
+      // return the statuses that should be displayed on the current page
       const start = (this.currentPage - 1) * this.pageSize;
       const end = start + this.pageSize;
-      this.statusList = []; // Initialize as empty array
-
       return this.statusList.slice(start, end);
     },
     totalPages() {
-      return Math.ceil(this.totalStatuses / this.pageSize);
+      // return the total number of pages
+      return Math.ceil(this.statusList.length / this.pageSize);
     }
   },
   mounted() {
@@ -319,16 +318,15 @@ export default {
         const token = localStorage.getItem("token"); // Get the token from local storage
         const ip = window.location.hostname;
         const url = `http://${ip}:8000/api/status`;
-        console.log(url);
-        console.log(token);
 
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}` // Set the token in the Authorization header
           }
         });
+        console.log(response.data.data);
 
-        this.statusList = response.data;
+        this.statusList = response.data.data;
       } catch (error) {
         this.error = error.response.data.message;
       }
@@ -411,6 +409,9 @@ export default {
     },
     showAddStatusModal() {
       $("#addStatusModal").modal("show");
+    },
+    closeAddStatusModal() {
+      $("#addStatusModal").modal("hide");
     }
   }
 };
