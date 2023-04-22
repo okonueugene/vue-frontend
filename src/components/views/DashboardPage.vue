@@ -230,6 +230,7 @@ export default {
       try {
         const token = localStorage.getItem("token");
         const ip = window.location.hostname;
+
         const url = `http://${ip}:8000/api/user/logout`;
 
         const response = await axios.get(url, {
