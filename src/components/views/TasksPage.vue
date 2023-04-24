@@ -169,6 +169,31 @@
                           v-model="newTask.description"
                         ></textarea>
                       </div>
+                      <div class="form-group">
+                        <label for="status">Status</label>
+                        <select
+                          class="form-control"
+                          id="status"
+                          v-model="newTask.status_id"
+                        >
+                          <option
+                            v-for="status in statuses"
+                            :key="status.id"
+                            :value="status.id"
+                          >
+                            {{ status.name }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="assignedTo">Due Date</label>
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="dueDate"
+                          v-model="newTask.due_date"
+                        />
+                      </div>
                     </form>
                   </div>
                   <div class="modal-footer">
@@ -193,41 +218,40 @@
             </div>
 
             <!-- Table to show tasks -->
-            <table class="table table-hover">
+            <table class="table table-hover table-bordered">
               <thead>
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Name</th>
                   <th scope="col">Description</th>
-                  <th scope="col">Assigned To</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Due Date</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <template v-if="tasks.length">
-                  <tr v-for="(task, index) in tasks" :key="task.id">
-                    <th scope="row">{{ index + 1 }}</th>
+                <template v-if="pagedTasks.length">
+                  <tr v-for="(task, index) in pagedTasks" :key="task.id">
+                    <th scope="row">
+                      {{ (currentPage - 1) * pageSize + index + 1 }}
+                    </th>
                     <td>{{ task.name }}</td>
                     <td>{{ task.description }}</td>
-                    <td>{{ task.assignedTo }}</td>
+                    <td>{{ task.status.name }}</td>
+                    <td>{{ task.due_date }}</td>
                     <td>
-                      <!-- Button to edit a task -->
                       <button
-                        class="btn btn-primary"
+                        class="btn btn-info"
                         @click="showEditTaskModal(task)"
                       >
                         Edit
                       </button>
-
-                      <!-- Button to assign a task -->
                       <button
                         class="btn btn-success"
                         @click="showAssignTaskModal(task)"
                       >
                         Assign
                       </button>
-
-                      <!-- Button to delete a task -->
                       <button
                         class="btn btn-danger"
                         @click="deleteTask(task.id)"
@@ -246,71 +270,73 @@
             </table>
 
             <!-- Modal to edit a task -->
-            <div
-              class="modal fade"
-              id="editTaskModal"
-              tabindex="-1"
-              role="dialog"
-              aria-labelledby="editTaskModalLabel"
-              aria-hidden="true"
-            >
-              <div class="modal-dialog" role="document">
+            <div class="modal" id="editTaskModal">
+              <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="editTaskModalLabel">
-                      Edit Task
-                    </h5>
+                    <h5 class="modal-title">Edit Task</h5>
                     <button
                       type="button"
                       class="close"
                       data-dismiss="modal"
-                      aria-label="Close"
                       @click="closeEditTaskModal"
                     >
-                      <span aria-hidden="true">&times;</span>
+                      &times;
                     </button>
                   </div>
                   <div class="modal-body">
-                    <!-- Form to edit a task -->
-
-                    <form>
+                    <form @submit.prevent="editTaskById">
                       <div class="form-group">
-                        <label for="taskName">Task Name</label>
+                        <label for="edit-task-name">Name</label>
                         <input
                           type="text"
                           class="form-control"
-                          id="taskName"
-                          v-model="newTask.name"
+                          id="edit-task-name"
+                          v-model="editedTask.name"
                         />
                       </div>
                       <div class="form-group">
-                        <label for="taskDescription">Task Description</label>
+                        <label for="edit-task-description">Description</label>
                         <textarea
                           class="form-control"
-                          id="taskDescription"
-                          rows="3"
-                          v-model="newTask.description"
+                          id="edit-task-description"
+                          v-model="editedTask.description"
                         ></textarea>
                       </div>
+                      <div class="form-group">
+                        <label for="edit-task-due-date">Due Date</label>
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="edit-task-due-date"
+                          v-model="editedTask.due_date"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="edit-task-status">Status</label>
+                        <select
+                          class="form-control"
+                          id="edit-task-status"
+                          v-model="editedTask.status"
+                        >
+                          <option
+                            v-for="status in statuses"
+                            :key="status.id"
+                            :value="status.id"
+                          >
+                            {{ status.name }}
+                          </option>
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-dismiss="modal"
+                        @click="editTaskById(id)"
+                      >
+                        Edit
+                      </button>
                     </form>
-                  </div>
-
-                  <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-secondary"
-                      data-dismiss="modal"
-                      @click="closeEditTaskModal"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      @click="editTask"
-                    >
-                      Edit Task
-                    </button>
                   </div>
                 </div>
               </div>
@@ -348,24 +374,87 @@
                     <form>
                       <div class="form-group">
                         <label for="taskName">Task Name</label>
-                        <input
-                          type="text"
+                        <select
                           class="form-control"
                           id="taskName"
-                          v-model="newTask.name"
-                        />
+                          v-model="newTask.task_id"
+                        >
+                          <option
+                            v-for="task in tasks"
+                            :key="task.id"
+                            :value="task.id"
+                          >
+                            {{ task.name }}
+                          </option>
+                        </select>
                       </div>
                       <div class="form-group">
                         <label for="userName">User Name </label>
                         <select
                           class="form-control"
                           id="userName"
-                          v-model="newTask.userName"
+                          v-model="newTask.user_id"
                         >
-                          <option v-for="user in users" :key="user.id">
+                          <option
+                            v-for="user in users"
+                            :key="user.id"
+                            :value="user.id"
+                          >
                             {{ user.name }}
                           </option>
                         </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="status">Status</label>
+                        <select
+                          class="form-control"
+                          id="status"
+                          v-model="newTask.status_id"
+                        >
+                          <option
+                            v-for="status in statuses"
+                            :key="status.id"
+                            :value="status.id"
+                          >
+                            {{ status.name }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="dueDate">Due Date</label>
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="dueDate"
+                          v-model="newTask.due_date"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="startTime">Start Time</label>
+                        <input
+                          type="time"
+                          class="form-control"
+                          id="startTime"
+                          v-model="newTask.start_time"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="endTime">End Time</label>
+                        <input
+                          type="time"
+                          class="form-control"
+                          id="endTime"
+                          v-model="newTask.end_time"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="remarks">Remarks</label>
+                        <textarea
+                          class="form-control"
+                          id="remarks"
+                          rows="3"
+                          v-model="newTask.remarks"
+                        ></textarea>
                       </div>
                       <div class="modal-footer">
                         <button
@@ -390,6 +479,47 @@
               </div>
             </div>
           </div>
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <a
+                  class="page-link"
+                  href="#"
+                  aria-label="Previous"
+                  @click.prevent="previousPage()"
+                >
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              <li
+                v-for="page in totalPages"
+                :key="page"
+                class="page-item"
+                :class="{ active: currentPage === page }"
+              >
+                <a
+                  class="page-link"
+                  href="#"
+                  @click.prevent="changePage(page)"
+                  >{{ page }}</a
+                >
+              </li>
+              <li
+                class="page-item"
+                :class="{ disabled: currentPage === totalPages }"
+              >
+                <a
+                  class="page-link"
+                  href="#"
+                  aria-label="Next"
+                  @click.prevent="nextPage()"
+                  ><span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span></a
+                >
+              </li>
+            </ul>
+          </nav>
         </div>
         <!-- /.container-fluid -->
       </div>
@@ -417,53 +547,155 @@ export default {
   data() {
     return {
       tasks: [], // array of tasks
-      perPage: 10, // number of tasks per page
+      pageSize: 10, // number of tasks to display per page
       currentPage: 1, // current page number
       error: null, // error message
       users: [], // array of users
+      statuses: [], // array of statuses
       newTask: {
         // new task object
         name: "",
         description: "",
         assignedTo: ""
+      },
+      editedTask: {
+        // task being edited
+        id: "",
+        name: "",
+        description: "",
+        due_date: "",
+        status: ""
+      },
+      selectedStatus: "", // selected status for filtering tasks
+      selectedTask: {
+        name: "",
+        description: "",
+        status_id: "",
+        due_date: ""
       }
     };
   },
   computed: {
-    totalRows() {
-      return this.tasks.length;
+    pagedTasks() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.tasks.slice(startIndex, endIndex);
     },
-    paginatedTasks() {
-      const start = (this.currentPage - 1) * this.perPage;
-      const end = start + this.perPage;
-      return this.tasks.slice(start, end);
+    totalPages() {
+      return Math.ceil(this.tasks.length / this.pageSize);
     }
   },
   mounted() {
     this.fetchTasks();
     this.fetchUsers();
+    this.fetchStatuses();
   },
   methods: {
+    changePage(page) {
+      this.currentPage = page;
+    },
+    previousPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
     async fetchTasks() {
       try {
         const token = localStorage.getItem("token"); // Get the token from local storage
         const ip = window.location.hostname;
-        var url = "http://" + ip + ":" + 8000 + "api/task/tasks";
+        var url = "http://" + ip + ":" + 8000 + "/api/tasks";
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}` // Set the token in the Authorization header
           }
         });
-        this.tasks = response.data;
+        this.tasks = response.data.data;
+        console.log(response.data.data[0]);
       } catch (error) {
         this.error = error.response.data.message;
       }
     },
+    async addTask() {
+      try {
+        const token = localStorage.getItem("token");
+        const ip = window.location.hostname;
+        const url = `http://${ip}:8000/api/tasks`;
+        const response = await axios.post(url, this.newTask, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        this.tasks.push(response.data);
+        this.newTask = {
+          name: "",
+          description: ""
+        };
+        location.reload();
+        $("#addTaskModal").modal("hide");
+      } catch (error) {
+        console.error("Failed to add task:", error.message);
+        console.error(error.response.data);
+      }
+    },
+    async editTaskById(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const ip = window.location.hostname;
+        const url = `http://${ip}:8000/api/tasks/${id}`;
+        const response = await axios.put(url, this.editedTask, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        // Find the index of the task being edited
+        const index = this.tasks.findIndex((task) => task.id === id);
+
+        // Update the task at the found index with the updated task
+        this.tasks.splice(index, 1, response.data);
+
+        // Reset the editedTask data property
+        this.editedTask = {
+          name: "",
+          description: "",
+          assignedTo: "",
+          status: ""
+        };
+
+        $("#editTaskModal").modal("hide");
+      } catch (error) {
+        console.error("Failed to edit task:", error.message);
+        console.error(error.response.data);
+      }
+    },
+
+    async deleteTask(taskId) {
+      try {
+        const token = localStorage.getItem("token"); // Get the token from local storage
+        const ip = window.location.hostname;
+        var url = `http://${ip}:8000/api/tasks/${taskId}`;
+
+        await axios.delete(url, {
+          headers: {
+            Authorization: `Bearer ${token}` // Set the token in the Authorization header
+          }
+        });
+        this.tasks = this.tasks.filter((task) => task.id !== taskId);
+      } catch (error) {
+        this.error = error.response.data.message;
+      }
+    },
+
     async fetchUsers() {
       try {
         const token = localStorage.getItem("token"); // Get the token from local storage
         const ip = window.location.hostname;
-        var url = "http://" + ip + ":" + 8000 + "api/user/getusers";
+        var url = "http://" + ip + ":" + 8000 + "/api/user/getusers";
 
         const response = await axios.get(url, {
           headers: {
@@ -473,6 +705,22 @@ export default {
         this.users = response.data;
       } catch (error) {
         console.error("Failed to fetch users:", error.message);
+      }
+    },
+    async fetchStatuses() {
+      try {
+        const token = localStorage.getItem("token");
+        const ip = window.location.hostname;
+        const url = `http://${ip}:8000/api/status`;
+
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.statuses = response.data.data;
+        console.log(response.data.data);
+      } catch (error) {
+        console.error(error);
+        console.log(error.response.data);
       }
     },
     async logout() {
@@ -499,8 +747,15 @@ export default {
       }
     },
     showEditTaskModal(task) {
-      this.editTask = { ...task }; // make a copy of the task
-      $("#editTaskModal").modal("show"); // show the modal
+      this.editedTask = {
+        id: task.id,
+        name: task.name,
+        description: task.description,
+        due_date: new Date(task.due_date).toISOString().substr(0, 10), // convert due_date to ISO format
+        status: task.status,
+        assignedTo: task.assignedTo
+      };
+      $("#editTaskModal").modal("show");
     },
     showAssignTaskModal() {
       this.newTask = {
@@ -527,31 +782,7 @@ export default {
     closeAssignTaskModal() {
       $("#assignTaskModal").modal("hide"); // hide the modal
     },
-    async assignTask() {
-      try {
-        const token = localStorage.getItem("token"); // Get the token from local storage
-        const ip = window.location.hostname;
-        var url = "http://" + ip + ":" + 8000 + "/api/tasks";
-
-        const response = await axios.post(
-          url,
-          {
-            name: this.newTask.name,
-            description: this.newTask.description,
-            assignedTo: this.newTask.assignedTo
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}` // Set the token in the Authorization header
-            }
-          }
-        );
-        this.tasks.push(response.data);
-        $("#assignTaskModal").modal("hide"); // hide the modal
-      } catch (error) {
-        this.error = error.response.data.message;
-      }
-    }
+    async assignTask() {}
   }
 };
 </script>
