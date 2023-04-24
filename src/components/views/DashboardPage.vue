@@ -121,7 +121,7 @@
             <div class="col-md-12">
               <h3 class="mt-3">My Tasks</h3>
               <hr />
-              <table class="table table-striped">
+              <table class="table table-hover table-bordered">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -132,19 +132,18 @@
                     <th>Due Date</th>
                     <th>Start Time</th>
                     <th>End Time</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody v-if="tasks.length > 0">
                   <tr v-for="(task, index) in tasks" :key="task.id">
                     <td>{{ index + 1 }}</td>
-                    <td>{{ task.name }}</td>
-                    <td>{{ task.task }}</td>
-                    <td>{{ task.status }}</td>
+                    <td>{{ task.user.name }}</td>
+                    <td>{{ task.task.name }}</td>
+                    <td>{{ task.status.name }}</td>
                     <td>{{ task.remarks }}</td>
-                    <td>{{ task.due_date }}</td>
-                    <td>{{ task.start_time }}</td>
-                    <td>{{ task.end_time }}</td>
+                    <td>{{ task.due_date.substr(0, 10) }}</td>
+                    <td>{{ task.start_time ?? "N/A" }}</td>
+                    <td>{{ task.end_time ?? "N/A" }}</td>
                   </tr>
                 </tbody>
                 <b-pagination
@@ -214,14 +213,15 @@ export default {
       try {
         const token = localStorage.getItem("token"); // Get the token from local storage
         const ip = window.location.hostname;
-        var url = "http://" + ip + ":" + 8000 + "/api/user-tasks/my-tasks";
+        var url = "http://" + ip + ":" + 8000 + "/api/user-tasks";
 
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}` // Set the token in the Authorization header
           }
         });
-        this.tasks = response.data;
+        this.tasks = response.data.data;
+        console.log(response.data.data);
       } catch (error) {
         this.error = error.response.data.message;
       }
