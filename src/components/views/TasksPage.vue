@@ -512,6 +512,7 @@ export default {
       error: null, // error message
       users: [], // array of users
       statuses: [], // array of statuses
+      taskAssignments: [],
       newTask: {
         // new task object
         name: "",
@@ -712,7 +713,7 @@ export default {
       }
     },
 
-    async assignTask() {
+    async assignUserTask() {
       // Retrieve the status_id and due_date from the selected task object
       const selectedTask = this.tasks.find(
         (task) => task.id === this.newTask.task_id
@@ -762,6 +763,24 @@ export default {
         remarks: ""
       };
       $("#assignTaskModal").modal("hide");
+      location.reload();
+    },
+    showEditTaskModal(task) {
+      this.editedTask = {
+        id: task.id,
+        name: task.name,
+        description: task.description,
+        due_date: task.due_date ? task.due_date.substr(0, 10) : "", // add a check for undefined due_date
+        status_id: task.status_id
+      };
+      this.selectedTask = {
+        id: task.id,
+        name: task.name,
+        description: task.description,
+        status_id: task.status_id,
+        due_date: task.due_date
+      };
+      $("#editTaskModal").modal("show");
     },
     showAddTaskModal() {
       this.newTask = {
