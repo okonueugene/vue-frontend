@@ -186,7 +186,7 @@
                         </select>
                       </div>
                       <div class="form-group">
-                        <label for="assignedTo">Due Date</label>
+                        <label for="dueDate">Due Date</label>
                         <input
                           type="date"
                           class="form-control"
@@ -237,8 +237,10 @@
                     </th>
                     <td>{{ task.name }}</td>
                     <td>{{ task.description }}</td>
-                    <td>{{ task.status.name }}</td>
-                    <td>{{ task.due_date }}</td>
+                    <td>{{ task.status ? task.status.name : "Unknown" }}</td>
+                    <td>
+                      {{ task.due_date ? task.due_date.substr(0, 10) : "" }}
+                    </td>
                     <td>
                       <button
                         class="btn btn-info"
@@ -317,7 +319,7 @@
                         <select
                           class="form-control"
                           id="edit-task-status"
-                          v-model="editedTask.status"
+                          v-model="selectedTask.status_id"
                         >
                           <option
                             v-for="status in statuses"
@@ -332,7 +334,7 @@
                         type="button"
                         class="btn btn-primary"
                         data-dismiss="modal"
-                        @click="editTaskById(id)"
+                        @click="editTaskById(editedTask.id)"
                       >
                         Edit
                       </button>
@@ -370,29 +372,13 @@
                   </div>
                   <div class="modal-body">
                     <!-- Form to assign a task -->
-
-                    <form>
+                    <form @submit.prevent="assignTask">
                       <div class="form-group">
-                        <label for="taskName">Task Name</label>
-                        <select
-                          class="form-control"
-                          id="taskName"
-                          v-model="newTask.task_id"
-                        >
-                          <option
-                            v-for="task in tasks"
-                            :key="task.id"
-                            :value="task.id"
-                          >
-                            {{ task.name }}
-                          </option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="userName">User Name </label>
+                        <label for="userName">User Name</label>
                         <select
                           class="form-control"
                           id="userName"
+                          required
                           v-model="newTask.user_id"
                         >
                           <option
@@ -405,36 +391,12 @@
                         </select>
                       </div>
                       <div class="form-group">
-                        <label for="status">Status</label>
-                        <select
-                          class="form-control"
-                          id="status"
-                          v-model="newTask.status_id"
-                        >
-                          <option
-                            v-for="status in statuses"
-                            :key="status.id"
-                            :value="status.id"
-                          >
-                            {{ status.name }}
-                          </option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="dueDate">Due Date</label>
-                        <input
-                          type="date"
-                          class="form-control"
-                          id="dueDate"
-                          v-model="newTask.due_date"
-                        />
-                      </div>
-                      <div class="form-group">
                         <label for="startTime">Start Time</label>
                         <input
                           type="time"
                           class="form-control"
                           id="startTime"
+                          required
                           v-model="newTask.start_time"
                         />
                       </div>
@@ -444,6 +406,7 @@
                           type="time"
                           class="form-control"
                           id="endTime"
+                          required
                           v-model="newTask.end_time"
                         />
                       </div>
@@ -453,6 +416,7 @@
                           class="form-control"
                           id="remarks"
                           rows="3"
+                          required
                           v-model="newTask.remarks"
                         ></textarea>
                       </div>
@@ -465,11 +429,7 @@
                         >
                           Cancel
                         </button>
-                        <button
-                          type="button"
-                          class="btn btn-primary"
-                          @click="assignTask"
-                        >
+                        <button type="submit" class="btn btn-primary">
                           Assign Task
                         </button>
                       </div>
@@ -547,7 +507,7 @@ export default {
   data() {
     return {
       tasks: [], // array of tasks
-      pageSize: 10, // number of tasks to display per page
+      pageSize: 4, // number of tasks to display per page
       currentPage: 1, // current page number
       error: null, // error message
       users: [], // array of users
@@ -556,7 +516,8 @@ export default {
         // new task object
         name: "",
         description: "",
-        assignedTo: ""
+        status_id: "",
+        due_date: ""
       },
       editedTask: {
         // task being edited
@@ -615,7 +576,6 @@ export default {
           }
         });
         this.tasks = response.data.data;
-        console.log(response.data.data[0]);
       } catch (error) {
         this.error = error.response.data.message;
       }
@@ -630,10 +590,13 @@ export default {
             Authorization: `Bearer ${token}`
           }
         });
-        this.tasks.push(response.data);
+        console.log(response.data);
+        // this.tasks.push(response.data);
         this.newTask = {
           name: "",
-          description: ""
+          description: "",
+          due_date: "",
+          status_id: ""
         };
         location.reload();
         $("#addTaskModal").modal("hide");
@@ -647,11 +610,14 @@ export default {
         const token = localStorage.getItem("token");
         const ip = window.location.hostname;
         const url = `http://${ip}:8000/api/tasks/${id}`;
+        this.editedTask.status_id = this.selectedTask.status_id;
+
         const response = await axios.put(url, this.editedTask, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
+        console.log(response);
 
         // Find the index of the task being edited
         const index = this.tasks.findIndex((task) => task.id === id);
@@ -663,14 +629,14 @@ export default {
         this.editedTask = {
           name: "",
           description: "",
-          assignedTo: "",
-          status: ""
+          due_date: "",
+          status_id: ""
         };
-
         $("#editTaskModal").modal("hide");
+        location.reload();
       } catch (error) {
         console.error("Failed to edit task:", error.message);
-        console.error(error.response.data);
+        console.error(error.response ? error.response.data : error.message);
       }
     },
 
@@ -717,7 +683,6 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.statuses = response.data.data;
-        console.log(response.data.data);
       } catch (error) {
         console.error(error);
         console.log(error.response.data);
@@ -746,32 +711,78 @@ export default {
         console.error("Failed to logout:", error.message);
       }
     },
-    showEditTaskModal(task) {
-      this.editedTask = {
-        id: task.id,
-        name: task.name,
-        description: task.description,
-        due_date: new Date(task.due_date).toISOString().substr(0, 10), // convert due_date to ISO format
-        status: task.status,
-        assignedTo: task.assignedTo
+
+    async assignTask() {
+      // Retrieve the status_id and due_date from the selected task object
+      const selectedTask = this.tasks.find(
+        (task) => task.id === this.newTask.task_id
+      );
+      const statusId = selectedTask.status_id;
+      const dueDate = selectedTask.due_date;
+      const taskId = selectedTask.id;
+
+      // Create a new task assignment object
+      const taskAssignment = {
+        task_id: taskId,
+        user_id: this.newTask.user_id,
+        status_id: statusId,
+        due_date: dueDate,
+        start_time: this.newTask.start_time,
+        end_time: this.newTask.end_time,
+        remarks: this.newTask.remarks
       };
-      $("#editTaskModal").modal("show");
-    },
-    showAssignTaskModal() {
+
+      // Send a POST request to the server with the task assignment object
+      try {
+        const token = localStorage.getItem("token");
+        const ip = window.location.hostname;
+        const url = `http://${ip}:8000/api/user-tasks`;
+        const response = await axios.post(url, taskAssignment, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log(response.data);
+        // Add the new task assignment to the taskAssignments array
+        this.taskAssignments.push(response.data);
+      } catch (error) {
+        console.error("Failed to assign task:", error.message);
+        console.error(error.response.data);
+        console.log(error.response.data.message);
+      }
+
+      // Reset the newTask object and close the modal
       this.newTask = {
-        name: "",
-        description: "",
-        assignedTo: ""
+        task_id: "",
+        user_id: "",
+        status_id: "",
+        due_date: "",
+        start_time: "",
+        end_time: "",
+        remarks: ""
       };
-      $("#assignTaskModal").modal("show"); // show the modal
+      $("#assignTaskModal").modal("hide");
     },
     showAddTaskModal() {
       this.newTask = {
         name: "",
         description: "",
-        assignedTo: ""
+        status_id: "",
+        due_date: ""
       };
       $("#addTaskModal").modal("show"); // show the modal
+    },
+    showAssignTaskModal(taskId) {
+      this.newTask = {
+        task_id: taskId,
+        user_id: "",
+        status_id: "",
+        due_date: "",
+        start_time: "",
+        end_time: "",
+        remarks: ""
+      };
+      $("#assignTaskModal").modal("show"); // show the modal
     },
     closeEditTaskModal() {
       $("#editTaskModal").modal("hide"); // hide the modal
