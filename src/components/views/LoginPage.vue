@@ -16,10 +16,11 @@
             >
               <p class="lead fw-normal mb-0 me-3">Sign In</p>
             </div>
-
+            <br />
+            <!-- 
             <div class="divider d-flex align-items-center my-4">
               <p class="text-center fw-bold mx-3 mb-0"></p>
-            </div>
+            </div> -->
 
             <!-- Email input -->
             <div class="form-outline mb-4">
@@ -101,9 +102,9 @@ export default {
     async submitForm() {
       try {
         const ip = window.location.hostname;
-        var url = "http://" + ip + ":" + 8000 + "/api/login";
+        var url = "http://" + ip + ":" + 8000 + "/api/v1/login";
         const response = await axios.post(url, {
-          email_address: this.email,
+          email: this.email,
           password: this.password
         });
         console.log(response);
