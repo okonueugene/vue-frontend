@@ -4,71 +4,43 @@
   padding: 0;
   box-sizing: border-box;
 }
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f5f5f5;
+}
+.container {
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.container-fluid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 50vh;
+}
 .header {
-  font-size: 30px;
+  font-size: 20px;
   font-weight: bold;
-  margin: 25px;
 }
 .row {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   overflow-x: hidden;
+  justify-content: space-evenly;
 }
+
 .col {
-  flex: 0 1 25%;
-}
-
-.card {
-  height: 250px;
-
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-
-.card-title {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.card-text {
-  font-size: 16px;
-  font-weight: normal;
-  line-height: 1.5;
-  overflow-y: scroll;
-}
-
-.card-img-top {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.card:hover {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.card:hover .card-title {
-  color: #007bff;
-}
-
-.card:hover .card-text {
-  color: #007bff;
-}
-
-.card:hover .card-img-top {
-  opacity: 0.8;
-}
-
-.is-long-content {
-  /* Customize styles for cards with long text */
-  .card-title {
-    font-size: 18px;
-  }
+  flex: 1;
+  margin: 10px;
+  min-width: 200px;
+  max-width: 300px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
 <template>
@@ -95,7 +67,7 @@
           </div>
         </div>
         <!-- Begin Page Content -->
-        <div class="container-fluid" style="height: 80%">
+        <div class="container-fluid">
           <div class="container text-center">
             <div class="header">New Books</div>
             <div class="row">
@@ -107,21 +79,54 @@
                     class="card-img-top"
                     alt="Book Cover"
                   />
-                  <div class="card-body">
-                    <h5 class="card-title">{{ book.name }}</h5>
-                    <p class="card-text">{{ book.description }}</p>
-                  </div>
+                  <span>{{ book.name }}</span>
                 </div>
               </div>
             </div>
-            <div class="header">Recent Books</div>
+            <div class="header">Recently Read Books</div>
 
-            <div class="row"></div>
+            <div class="row">
+              <!-- Loop through the new books data and render each book -->
+              <div v-for="book in books" :key="book.name" class="col">
+                <div class="card">
+                  <img
+                    :src="book.image"
+                    class="card-img-top"
+                    alt="Book Cover"
+                  />
+                  <span>{{ book.name }}</span>
+                </div>
+              </div>
+            </div>
             <div class="header">Reccomended Books</div>
 
-            <div class="row"></div>
+            <div class="row">
+              <!-- Loop through the new books data and render each book -->
+              <div v-for="book in books" :key="book.name" class="col">
+                <div class="card">
+                  <img
+                    :src="book.image"
+                    class="card-img-top"
+                    alt="Book Cover"
+                  />
+                  <span>{{ book.name }}</span>
+                </div>
+              </div>
+            </div>
             <div class="header">Favorite Books</div>
-            <div class="row"></div>
+            <div class="row">
+              <!-- Loop through the new books data and render each book -->
+              <div v-for="book in books" :key="book.name" class="col">
+                <div class="card">
+                  <img
+                    :src="book.image"
+                    class="card-img-top"
+                    alt="Book Cover"
+                  />
+                  <span>{{ book.name }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- /.container-fluid -->
@@ -165,8 +170,10 @@ export default {
           }
         });
 
+        console.log("API Response:", response.data);
+
         if (response.status === 200) {
-          this.books = response.data;
+          this.books = response.data.data;
         } else {
           console.error(
             `Fetch books failed with status code ${response.status}`
