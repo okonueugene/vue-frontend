@@ -66,28 +66,40 @@ export default {
   methods: {
     async logout() {
       try {
-        const token = localStorage.getItem("token");
         const ip = window.location.hostname;
-
-        const url = `http://${ip}:8000/api/v1/logout`;
-
-        const response = await axios.post(url, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        let url = "http://" + ip + ":" + 8000 + "/api/v1/logout";
+        const response = await axios.post(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token")
+            }
           }
-        });
-
-        localStorage.removeItem("token");
+        );
+        console.log(response);
 
         if (response.status === 200) {
-          window.location.href = "/";
+          localStorage.removeItem("isAuthenticated");
+          localStorage.removeItem("token");
+          this.$router.push("/");
         } else {
-          console.error(`Logout failed with status code ${response.status}`);
+          this.error = response.data.message;
         }
       } catch (error) {
-        console.error("Failed to logout:", error.message);
+        console.log(error);
+        this.error = error.response.data.message;
+      }
+    },
+    Authenticated() {
+      if (!localStorage.getItem("isAuthenticated")) {
+        this.$router.push("/");
       }
     }
+  },
+  //check if user is authenticated
+  mounted() {
+    this.Authenticated();
   }
 };
 </script>

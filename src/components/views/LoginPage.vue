@@ -110,8 +110,7 @@ export default {
         console.log(response);
         if (response.status === 200) {
           localStorage.setItem("isAuthenticated", true);
-          const token = response.data.access_token;
-          console.log(token);
+          const token = response.data.token;
           localStorage.setItem("token", token);
           this.$router.push("/dashboard");
         } else {
