@@ -5,10 +5,11 @@
 </template>
 
 <script>
-import Header from "./components/views/Header.vue";
-import NavBar from "./components/views/NavBar.vue";
-import Footer from "./components/views/Footer.vue";
-import SideBar from "./components/views/SideBar.vue";
+import Header from "./components/views/commons/Header.vue";
+import NavBar from "./components/views/commons/NavBar.vue";
+import Footer from "./components/views/commons/Footer.vue";
+import SideBar from "./components/views/commons/SideBar.vue";
+import Pagination from "./components/views/commons/Pagination.vue";
 
 export default {
   name: "App",
@@ -16,7 +17,8 @@ export default {
     Header,
     NavBar,
     Footer,
-    SideBar
+    SideBar,
+    Pagination
   }
 };
 </script>
