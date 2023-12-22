@@ -96,8 +96,12 @@ export default {
       password: "",
       passwordConfirmed: "",
       name: "",
-      errorMessage: ""
+      errorMessage: "",
+      api: null
     };
+  },
+  mounted() {
+    this.api = import.meta.env.VITE_APP_API_URL;
   },
   methods: {
     async register() {
@@ -108,8 +112,7 @@ export default {
       }
 
       try {
-        const ip = window.location.hostname;
-        const url = `http://${ip}:8000/api/v1/users`;
+        const url = `${this.api}/users`;
         const response = await axios.post(url, {
           //set headers
           headers: {

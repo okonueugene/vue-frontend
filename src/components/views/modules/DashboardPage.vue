@@ -217,9 +217,11 @@ export default {
       filteredBooks: [],
       error: "",
       loading: false,
-      errorMessage: ""
+      errorMessage: "",
+      api: import.meta.env.VITE_APP_API_URL
     };
   },
+
   created() {
     this.fetchBooks();
     this.displayErrorMessage();
@@ -318,7 +320,7 @@ export default {
       let pattern = /http:\/\/localhost\/storage\//;
 
       // Define the replacement string (the part you want to replace it with)
-      let replacement = "http://localhost:8000/storage/";
+      let replacement = this.api + "/storage/";
 
       // Use replace to replace the matched part with the replacement
       return mediaUrl.replace(pattern, replacement);
@@ -328,12 +330,11 @@ export default {
         this.loading = true;
 
         const token = localStorage.getItem("token");
-        const ip = window.location.hostname;
-        console.log(this.search.length);
 
         if (this.search.length >= 4) {
           // If search is not empty, call the API to search for books
-          const url = `http://${ip}:8000/api/v1/books/search/${this.search}`;
+          const url = `${this.api}/books/search/${this.search}`;
+          console.log(url);
           const response = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -369,10 +370,9 @@ export default {
         this.loading = true;
 
         const token = localStorage.getItem("token");
-        const ip = window.location.hostname;
-        console.log(token);
 
-        let url = `http://${ip}:8000/api/v1/books`;
+        var url = this.api + "/books";
+        console.log(url);
 
         const response = await axios.get(url, {
           headers: {

@@ -122,7 +122,8 @@ export default {
       description: "",
       error: null,
       pageSize: 2, // number of tasks to display per page
-      currentPage: 1 // current page number
+      currentPage: 1, // current page number
+      api: import.meta.env.VITE_APP_API_URL
     };
   },
   created() {
@@ -158,9 +159,8 @@ export default {
       // Handle form submission
       try {
         const token = localStorage.getItem("token");
-        const ip = window.location.hostname;
 
-        let url = `http://${ip}:8000/api/v1/categories`;
+        let url = `${this.api}/categories`;
 
         const response = await axios.post(
           url,
@@ -202,9 +202,8 @@ export default {
       // Fetch categories from the API
       try {
         const token = localStorage.getItem("token");
-        const ip = window.location.hostname;
 
-        let url = `http://${ip}:8000/api/v1/categories`;
+        let url = `${this.api}/categories`;
 
         const response = await axios.get(url, {
           headers: {

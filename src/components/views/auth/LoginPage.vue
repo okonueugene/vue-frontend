@@ -3,6 +3,7 @@
     <div class="container-fluid h-custom">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-md-9 col-lg-6 col-xl-5">
+          <span>{{ api }}</span>
           <img
             src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
             class="img-fluid"
@@ -95,14 +96,18 @@ export default {
     return {
       email: "",
       password: "",
-      error: ""
+      error: "",
+      api: null
     };
+  },
+  mounted() {
+    this.api = import.meta.env.VITE_APP_API_URL;
   },
   methods: {
     async submitForm() {
       try {
-        const ip = window.location.hostname;
-        var url = "http://" + ip + ":" + 8000 + "/api/v1/login";
+        var url = this.api + "/login";
+        console.log(url);
         const response = await axios.post(url, {
           email: this.email,
           password: this.password

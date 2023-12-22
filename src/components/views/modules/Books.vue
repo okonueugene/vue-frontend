@@ -167,7 +167,8 @@ export default {
       description: "",
       error: null,
       pageSize: 2, // number of tasks to display per page
-      currentPage: 1 // current page number
+      currentPage: 1, // current page number
+      api: import.meta.env.VITE_APP_API_URL
     };
   },
   created() {
@@ -206,7 +207,6 @@ export default {
     async onSubmit() {
       try {
         const token = localStorage.getItem("token");
-        const ip = window.location.hostname;
 
         let formData = new FormData();
         formData.append("name", this.name);
@@ -218,16 +218,12 @@ export default {
         formData.append("image", this.image);
         formData.append("added_by", this.user.id); // Use this.user.id directly
 
-        const response = await axios.post(
-          `http://${ip}:8000/api/v1/books`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`
-            }
+        const response = await axios.post(`${this.api}/books`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`
           }
-        );
+        });
 
         if (response.status === 201) {
           iziToast.success({
@@ -258,9 +254,8 @@ export default {
       // Fetch categories from the API
       try {
         const token = localStorage.getItem("token");
-        const ip = window.location.hostname;
 
-        let url = `http://${ip}:8000/api/v1/categories`;
+        let url = `${this.api}/categories`;
 
         const response = await axios.get(url, {
           headers: {
@@ -283,9 +278,8 @@ export default {
       // Fetch categories from the API
       try {
         const token = localStorage.getItem("token");
-        const ip = window.location.hostname;
 
-        let url = `http://${ip}:8000/api/v1/subcategories`;
+        let url = `${this.api}/subcategories`;
 
         const response = await axios.get(url, {
           headers: {
