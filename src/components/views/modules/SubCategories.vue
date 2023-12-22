@@ -287,7 +287,6 @@ export default {
       // Delete a category from the API
       try {
         const token = localStorage.getItem("token");
-        console.log(token);
 
         let url = `${this.api}/subcategories/${id}`;
 

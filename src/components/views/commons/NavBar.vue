@@ -77,7 +77,6 @@ export default {
             }
           }
         );
-        console.log(response);
 
         if (response.status === 200) {
           localStorage.removeItem("isAuthenticated");
@@ -87,7 +86,6 @@ export default {
           this.error = response.data.message;
         }
       } catch (error) {
-        console.log(error);
         this.error = error.response.data.message;
       }
     },

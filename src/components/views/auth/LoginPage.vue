@@ -107,12 +107,10 @@ export default {
     async submitForm() {
       try {
         var url = this.api + "/login";
-        console.log(url);
         const response = await axios.post(url, {
           email: this.email,
           password: this.password
         });
-        console.log(response);
         if (response.status === 200) {
           localStorage.setItem("isAuthenticated", true);
           const token = response.data.token;
@@ -124,7 +122,6 @@ export default {
           this.error = response.data.message;
         }
       } catch (error) {
-        console.log(error);
         this.error = error.response.data.message;
       }
     }

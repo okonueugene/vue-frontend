@@ -334,7 +334,6 @@ export default {
         if (this.search.length >= 4) {
           // If search is not empty, call the API to search for books
           const url = `${this.api}/books/search/${this.search}`;
-          console.log(url);
           const response = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -372,7 +371,6 @@ export default {
         const token = localStorage.getItem("token");
 
         var url = this.api + "/books";
-        console.log(url);
 
         const response = await axios.get(url, {
           headers: {

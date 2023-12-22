@@ -288,7 +288,6 @@ export default {
         });
 
         if (response.status === 200) {
-          console.log(this.category_id);
           this.subcategories = response.data.data;
           //
         } else {

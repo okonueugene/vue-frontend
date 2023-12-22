@@ -324,7 +324,6 @@ export default {
             Authorization: `Bearer ${token}` // Set the token in the Authorization header
           }
         });
-        console.log(response.data.data);
 
         this.statusList = response.data.data;
       } catch (error) {

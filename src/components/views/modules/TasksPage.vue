@@ -591,7 +591,6 @@ export default {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log(response.data);
         // this.tasks.push(response.data);
         this.newTask = {
           name: "",
@@ -618,7 +617,6 @@ export default {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log(response);
 
         // Find the index of the task being edited
         const index = this.tasks.findIndex((task) => task.id === id);
@@ -686,7 +684,6 @@ export default {
         this.statuses = response.data.data;
       } catch (error) {
         console.error(error);
-        console.log(error.response.data);
       }
     },
     async logout() {
@@ -743,13 +740,12 @@ export default {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log(response.data);
         // Add the new task assignment to the taskAssignments array
         this.taskAssignments.push(response.data);
       } catch (error) {
-        console.error("Failed to assign task:", error.message);
-        console.error(error.response.data);
-        console.log(error.response.data.message);
+        // console.error("Failed to assign task:", error.message);
+        // console.error(error.response.data);
+        // console.log(error.response.data.message);
       }
 
       // Reset the newTask object and close the modal

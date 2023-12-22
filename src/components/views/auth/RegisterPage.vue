@@ -133,7 +133,6 @@ export default {
           this.errorMessage =
             "An error occurred while registering. Please try again.";
         }
-        console.log(error.response.data.email);
       }
     }
   }
