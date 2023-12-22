@@ -1,0 +1,5 @@
+npm run build
+git add dist -f
+git subtree split --prefix dist -b temp-branch
+git push origin temp-branch:gh-pages --force
+git branch -D temp-branch
