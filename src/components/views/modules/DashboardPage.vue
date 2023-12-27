@@ -217,8 +217,7 @@ export default {
       filteredBooks: [],
       error: "",
       loading: false,
-      errorMessage: "",
-      api: import.meta.env.VITE_APP_API_URL
+      errorMessage: ""
     };
   },
 
@@ -320,7 +319,7 @@ export default {
       let pattern = /http:\/\/localhost\/storage\//;
 
       // Define the replacement string (the part you want to replace it with)
-      let replacement = this.api + "/storage/";
+      let replacement = import.meta.env.VITE_APP_API_URL + "/storage/";
 
       // Use replace to replace the matched part with the replacement
       return mediaUrl.replace(pattern, replacement);
@@ -333,7 +332,9 @@ export default {
 
         if (this.search.length >= 4) {
           // If search is not empty, call the API to search for books
-          const url = `${this.api}/books/search/${this.search}`;
+          const url = `${import.meta.env.VITE_APP_API_URL}/books/search/${
+            this.search
+          }`;
           const response = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -370,7 +371,8 @@ export default {
 
         const token = localStorage.getItem("token");
 
-        var url = this.api + "/books";
+        var url = import.meta.env.VITE_APP_API_URL + "/books";
+        console.log(url);
 
         const response = await axios.get(url, {
           headers: {
