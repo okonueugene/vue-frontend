@@ -60,14 +60,15 @@ import axios from "axios";
 export default {
   data() {
     return {
-      error: ""
+      error: "",
+      user: {},
+      api: import.meta.env.VITE_APP_API_URL
     };
   },
   methods: {
     async logout() {
       try {
-        const ip = window.location.hostname;
-        let url = "http://" + ip + ":" + 8000 + "/api/v1/logout";
+        var url = this.api + "/logout";
         const response = await axios.post(
           url,
           {},

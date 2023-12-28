@@ -53,20 +53,115 @@
       </a>
     </li>
     <hr class="sidebar-divider" />
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="/status">
-        <i class="fas fa-fw fa-wrench"></i>
-        <span>Loan Book</span>
+    <li class="nav-item dropdown">
+      <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        id="bookLoansDropdown"
+        role="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <i class="fas fa-fw fa-list"></i>
+
+        <span>Book Loans</span>
       </a>
+
+      <ul
+        class="dropdown-menu bg-gradient-primary"
+        aria-labelledby="bookLoansDropdown"
+      >
+        <li>
+          <a class="dropdown-item text-white" href="/userdetails">Approved</a>
+        </li>
+        <li>
+          <a class="dropdown-item text-white" href="/roles">Rejected</a>
+        </li>
+        <li>
+          <a class="dropdown-item text-white" href="/permissions">Pending</a>
+        </li>
+
+        <li>
+          <a class="dropdown-item text-white" href="/permissions">Returned</a>
+        </li>
+
+        <li>
+          <a class="dropdown-item text-white" href="/permissions">Overdue</a>
+        </li>
+      </ul>
     </li>
     <hr class="sidebar-divider" />
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="/status">
+    <li class="nav-item dropdown">
+      <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        id="administrationDropdown"
+        role="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
         <i class="fas fa-fw fa-wrench"></i>
+
         <span>Administration</span>
       </a>
+
+      <ul
+        class="dropdown-menu bg-gradient-primary"
+        aria-labelledby="administrationDropdown"
+      >
+        <li>
+          <a class="dropdown-item text-white" href="/userdetails">Users</a>
+        </li>
+        <li>
+          <a class="dropdown-item text-white" href="/roles">Roles</a>
+        </li>
+        <li>
+          <a class="dropdown-item text-white" href="/permissions"
+            >Permissions</a
+          >
+        </li>
+      </ul>
     </li>
-    <hr class="sidebar-divider" />
   </ul>
+
   <!-- End of Sidebar -->
 </template>
+
+<script>
+//set active class on sidebar
+export default {
+  mounted() {
+    const currentLocation = window.location.pathname;
+    const menuItems = document.querySelectorAll(".nav-item a");
+    const administrationDropdownItems = document.querySelectorAll(
+      "#administrationDropdown ~ .dropdown-menu .dropdown-item"
+    );
+
+    for (let i = 0; i < menuItems.length; i++) {
+      if (menuItems[i].getAttribute("href") === currentLocation) {
+        menuItems[i].classList.add("active");
+      }
+    }
+
+    for (let i = 0; i < administrationDropdownItems.length; i++) {
+      if (
+        administrationDropdownItems[i].getAttribute("href") === currentLocation
+      ) {
+        administrationDropdownItems[i].classList.add("active");
+        administrationDropdownItems[i]
+          .closest(".nav-item")
+          .classList.add("active"); // Add active to parent dropdown toggle
+      }
+    }
+
+    for (let i = 0; i < bookLoansDropdownItems.length; i++) {
+      if (bookLoansDropdownItems[i].getAttribute("href") === currentLocation) {
+        bookLoansDropdownItems[i].classList.add("active");
+        bookLoansDropdownItems[i].closest(".nav-item").classList.add("active"); // Add active to parent dropdown toggle
+      }
+    }
+  }
+};
+</script>

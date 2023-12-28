@@ -112,6 +112,16 @@
                           />
                         </div>
                         <div class="mb-3">
+                          <label for="copies" class="form-label">Copies</label>
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="copies"
+                            v-model="copies"
+                          />
+                        </div>
+
+                        <div class="mb-3">
                           <label for="image" class="form-label">Image</label>
                           <input
                             type="file"
@@ -164,6 +174,7 @@ export default {
       pages: "",
       image: null,
       added_by: null,
+      copies: null,
       description: "",
       error: null,
       pageSize: 2, // number of tasks to display per page
@@ -174,7 +185,12 @@ export default {
   created() {
     // Fetch categories when the component is created
     this.fetchCategories();
-    this.fetchSubCategories();
+  },
+  watch: {
+    // Watch for changes in the category_id and fetch subcategories
+    category_id(newValue, oldValue) {
+      this.fetchSubcategories(newValue);
+    }
   },
   computed: {
     // Compute the total number of pages
@@ -215,6 +231,7 @@ export default {
         formData.append("category_id", this.category_id);
         formData.append("sub_category_id", this.sub_category_id);
         formData.append("pages", this.pages);
+        formData.append("copies", this.copies);
         formData.append("image", this.image);
         formData.append("added_by", this.user.id); // Use this.user.id directly
 
@@ -238,7 +255,9 @@ export default {
           this.category_id = "";
           this.sub_category_id = "";
           this.pages = "";
+          this.copies = "";
           this.$refs.imageInput.value = null;
+          this.error = null;
         } else {
           console.error(
             `Failed to add book with status code ${response.status}`
@@ -274,12 +293,12 @@ export default {
         console.error("Failed to fetch categories:", error.message);
       }
     },
-    async fetchSubCategories() {
-      // Fetch categories from the API
+    async fetchSubcategories(categoryId) {
+      // Fetch subcategories from the API
       try {
         const token = localStorage.getItem("token");
 
-        let url = `${this.api}/subcategories`;
+        let url = `${this.api}/categories/${categoryId}`;
 
         const response = await axios.get(url, {
           headers: {
@@ -288,8 +307,8 @@ export default {
         });
 
         if (response.status === 200) {
-          this.subcategories = response.data.data;
-          //
+          this.subcategories = response.data.data.subcategories;
+          console.log(this.subcategories);
         } else {
           console.error(
             `Failed to fetch subcategories with status code ${response.status}`

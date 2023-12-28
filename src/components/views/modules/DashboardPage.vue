@@ -69,6 +69,11 @@ body {
   font-weight: bold;
   margin: 10px;
 }
+
+a {
+  text-decoration: none;
+  color: black;
+}
 </style>
 <template>
   <!-- Page Wrapper -->
@@ -118,7 +123,11 @@ body {
                       class="card-img-top"
                       :alt="getMediaFileName(book)"
                     />
-                    <span>{{ book.name }}</span>
+                    <span>
+                      <a href="javascript:void(0)" @click="viewBook(book.id)">{{
+                        book.name
+                      }}</a>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -133,7 +142,12 @@ body {
                     class="card-img-top"
                     :alt="getMediaFileName(book)"
                   />
-                  <span>{{ book.name }}</span>
+
+                  <span>
+                    <a href="javascript:void(0)" @click="viewBook(book.id)">{{
+                      book.name
+                    }}</a>
+                  </span>
                 </div>
               </div>
             </div>
@@ -152,7 +166,11 @@ body {
                     class="card-img-top"
                     :alt="getMediaFileName(book)"
                   />
-                  <span>{{ book.name }}</span>
+                  <span>
+                    <a href="javascript:void(0)" @click="viewBook(book.id)">{{
+                      book.name
+                    }}</a>
+                  </span>
                 </div>
               </div>
             </div>
@@ -171,7 +189,11 @@ body {
                     class="card-img-top"
                     :alt="getMediaFileName(book)"
                   />
-                  <span>{{ book.name }}</span>
+                  <span>
+                    <a href="javascript:void(0)" @click="viewBook(book.id)">{{
+                      book.name
+                    }}</a>
+                  </span>
                 </div>
               </div>
             </div>
@@ -185,7 +207,11 @@ body {
                     class="card-img-top"
                     :alt="getMediaFileName(book)"
                   />
-                  <span>{{ book.name }}</span>
+                  <span>
+                    <a href="javascript:void(0)" @click="viewBook(book.id)">{{
+                      book.name
+                    }}</a>
+                  </span>
                 </div>
               </div>
             </div>
@@ -217,7 +243,9 @@ export default {
       filteredBooks: [],
       error: "",
       loading: false,
-      errorMessage: ""
+      errorMessage: "",
+      api: import.meta.env.VITE_APP_API_URL,
+      files: import.meta.env.VITE_APP_MEDIA_URL
     };
   },
 
@@ -301,7 +329,6 @@ export default {
       }
     }
   },
-
   methods: {
     getImageUrl(book) {
       // Check if the image property is null, use media property instead
@@ -319,7 +346,7 @@ export default {
       let pattern = /http:\/\/localhost\/storage\//;
 
       // Define the replacement string (the part you want to replace it with)
-      let replacement = import.meta.env.VITE_APP_API_URL + "/storage/";
+      let replacement = this.files + "/storage/";
 
       // Use replace to replace the matched part with the replacement
       return mediaUrl.replace(pattern, replacement);
@@ -332,9 +359,7 @@ export default {
 
         if (this.search.length >= 4) {
           // If search is not empty, call the API to search for books
-          const url = `${import.meta.env.VITE_APP_API_URL}/books/search/${
-            this.search
-          }`;
+          const url = `${this.api}/books/search/${this.search}`;
           const response = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -371,7 +396,7 @@ export default {
 
         const token = localStorage.getItem("token");
 
-        var url = import.meta.env.VITE_APP_API_URL + "/books";
+        var url = this.api + "/books";
         console.log(url);
 
         const response = await axios.get(url, {
@@ -402,7 +427,19 @@ export default {
         this.displayErrorMessage();
       }
     },
-    //messages for the toast
+    async viewBook(id) {
+      try {
+        this.loading = true;
+        this.$router.push({ name: "BookDetailsPage", params: { id: id } });
+      } catch (error) {
+        console.error("Failed to fetch books:", error.message);
+        this.errorMessage = error.message;
+        this.loading = false;
+      } finally {
+        this.loading = false;
+        this.displayErrorMessage();
+      }
+    },
     // Display the error message using iziToast
     displayErrorMessage() {
       if (this.errorMessage) {
@@ -417,6 +454,7 @@ export default {
         this.errorMessage = "";
       }
     }
+    //pass the book id to the book details page
   }
 };
 </script>

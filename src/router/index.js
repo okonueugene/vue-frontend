@@ -3,11 +3,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import RegisterPage from "../components/views/auth/RegisterPage.vue";
 import LoginPage from "../components/views/auth/LoginPage.vue";
 import DashboardPage from "../components/views/modules/DashboardPage.vue";
-import StatusPage from "../components/views/modules/StatusPage.vue";
-import TasksPage from "../components/views/modules/TasksPage.vue";
 import CategoriesPage from "../components/views/modules/Categories.vue";
 import SubCategoriesPage from "../components/views/modules/SubCategories.vue";
 import BooksPage from "../components/views/modules/Books.vue";
+import BookDetailsPage from "../components/views/modules/BookDetails.vue";
+import LoanBookPage from "../components/views/modules/LoanBooks.vue";
+import UserDetailsPage from "../components/views/modules/UserDetails.vue";
+import RolesPage from "../components/views/modules/Roles.vue";
+import PermissionsPage from "../components/views/modules/Permissions.vue";
 
 const routes = [
   {
@@ -21,29 +24,103 @@ const routes = [
     component: RegisterPage
   },
   {
+    path: "/userdetails",
+    name: "UserDetailsPage",
+    component: UserDetailsPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else if (isAuthenticated && role == "user") {
+        // Proceed to the route if the user is authenticated
+        next("/dashboard");
+        //izitoast
+        iziToast.error({
+          title: "Error",
+          message: "You are not authorized to access this resource.",
+          position: "topRight"
+        });
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+  {
+    path: "/roles",
+    name: "RolesPage",
+    component: RolesPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else if (isAuthenticated && role == "user") {
+        // Proceed to the route if the user is authenticated
+        next("/dashboard");
+        //izitoast
+        iziToast.error({
+          title: "Error",
+          message: "You are not authorized to access this resource.",
+          position: "topRight"
+        });
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+  {
+    path: "/permissions",
+    name: "PermissionsPage",
+    component: PermissionsPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else if (isAuthenticated && role == "user") {
+        // Proceed to the route if the user is authenticated
+        next("/dashboard");
+        //izitoast
+        iziToast.error({
+          title: "Error",
+          message: "You are not authorized to access this resource.",
+          position: "topRight"
+        });
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+  {
     path: "/dashboard",
     name: "DashboardPage",
     component: DashboardPage,
     beforeEnter: (to, from, next) => {
       const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-      if (isAuthenticated) {
-        // Proceed to the route if the user is authenticated
-        next();
-      } else {
-        // Redirect to the login page if the user is not authenticated
-        next("/");
-      }
-    }
-  },
-  {
-    path: "/tasks",
-    name: "TasksPage",
-    component: TasksPage,
-    beforeEnter: (to, from, next) => {
-      const isAuthenticated = localStorage.getItem("isAuthenticated");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
 
-      if (isAuthenticated) {
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else if (isAuthenticated && role == "user") {
         // Proceed to the route if the user is authenticated
         next();
       } else {
@@ -52,22 +129,7 @@ const routes = [
       }
     }
   },
-  {
-    path: "/status",
-    name: "StatusPage",
-    component: StatusPage,
-    beforeEnter: (to, from, next) => {
-      const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-      if (isAuthenticated) {
-        // Proceed to the route if the user is authenticated
-        next();
-      } else {
-        // Redirect to the login page if the user is not authenticated
-        next("/");
-      }
-    }
-  },
   {
     path: "/categories",
     name: "CategoriesPage",
@@ -75,9 +137,21 @@ const routes = [
     beforeEnter: (to, from, next) => {
       const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-      if (isAuthenticated) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+
+      if (isAuthenticated && role == "admin") {
         // Proceed to the route if the user is authenticated
         next();
+      } else if (isAuthenticated && role == "user") {
+        // Proceed to the route if the user is authenticated
+        next("/dashboard");
+        //izitoast
+        iziToast.error({
+          title: "Error",
+          message: "You are not authorized to access this resource.",
+          position: "topRight"
+        });
       } else {
         // Redirect to the login page if the user is not authenticated
         next("/");
@@ -91,9 +165,21 @@ const routes = [
     beforeEnter: (to, from, next) => {
       const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-      if (isAuthenticated) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+
+      if (isAuthenticated && role == "admin") {
         // Proceed to the route if the user is authenticated
         next();
+      } else if (isAuthenticated && role == "user") {
+        // Proceed to the route if the user is authenticated
+        next("/dashboard");
+        //izitoast
+        iziToast.error({
+          title: "Error",
+          message: "You are not authorized to access this resource.",
+          position: "topRight"
+        });
       } else {
         // Redirect to the login page if the user is not authenticated
         next("/");
@@ -107,9 +193,72 @@ const routes = [
     beforeEnter: (to, from, next) => {
       const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-      if (isAuthenticated) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+
+      if (isAuthenticated && role == "admin") {
         // Proceed to the route if the user is authenticated
         next();
+      } else if (isAuthenticated && role == "user") {
+        // Proceed to the route if the user is authenticated
+        next("/dashboard");
+        //izitoast
+        iziToast.error({
+          title: "Error",
+          message: "You are not authorized to access this resource.",
+          position: "topRight"
+        });
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+  {
+    path: "/books/:id",
+    name: "BookDetailsPage",
+    component: BookDetailsPage,
+    props: (route) => ({ id: parseInt(route.params.id) }),
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else if (isAuthenticated && role == "user") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+  {
+    path: "/loanbooks",
+    name: "LoanBookPage",
+    component: LoanBookPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else if (isAuthenticated && role == "user") {
+        // Proceed to the route if the user is authenticated
+        next("/dashboard");
+        //izitoast
+        iziToast.error({
+          title: "Error",
+          message: "You are not authorized to access this resource.",
+          position: "topRight"
+        });
       } else {
         // Redirect to the login page if the user is not authenticated
         next("/");
