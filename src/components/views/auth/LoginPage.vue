@@ -84,6 +84,8 @@
           <p class="text-danger" v-if="error">{{ error }}</p>
         </div>
       </div>
+      <p>Username:admin@library.com</p>
+      <p>Password:password</p>
     </div>
   </section>
 </template>

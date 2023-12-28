@@ -73,6 +73,9 @@
         aria-labelledby="bookLoansDropdown"
       >
         <li>
+          <a class="dropdown-item text-white" href="/booklo">Loaned Books</a>
+        </li>
+        <li>
           <a class="dropdown-item text-white" href="/userdetails">Approved</a>
         </li>
         <li>
@@ -135,6 +138,9 @@ export default {
   mounted() {
     const currentLocation = window.location.pathname;
     const menuItems = document.querySelectorAll(".nav-item a");
+    const bookLoansDropdownItems = document.querySelectorAll(
+      "#bookLoansDropdown ~ .dropdown-menu .dropdown-item"
+    );
     const administrationDropdownItems = document.querySelectorAll(
       "#administrationDropdown ~ .dropdown-menu .dropdown-item"
     );
