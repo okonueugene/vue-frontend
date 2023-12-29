@@ -13,11 +13,6 @@
         <nav-bar></nav-bar>
         <!-- End of Topbar -->
         <div class="container mt-4 mb-4">
-          <div class="row justify-content-center">
-            <div class="col-md-6 float-end">
-              <div class="input-group mb-3 float-end">{{ user.name }}</div>
-            </div>
-          </div>
           <div
             class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center"
           >
@@ -27,7 +22,6 @@
                 <div class="col">
                   <div class="card">
                     <div class="card-body">
-                      <!-- ['name', 'publisher', 'category_id', 'sub_category_id', 'description', 'pages', 'image', 'added_by'] -->
                       <form
                         @submit.prevent="onSubmit"
                         enctype="multipart/form-data"
@@ -155,6 +149,7 @@
       </div>
     </div>
   </div>
+  <footer-view></footer-view>
 </template>
 
 <script>
@@ -329,5 +324,10 @@ export default {
   font-size: 15px;
   align-items: center;
   justify-content: center;
+}
+.header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 </style>

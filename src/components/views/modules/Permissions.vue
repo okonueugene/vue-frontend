@@ -13,18 +13,11 @@
         <nav-bar></nav-bar>
         <!-- End of Topbar -->
         <div class="container mt-4 mb-4">
-          <div class="row justify-content-center">
-            <div class="col-md-6 float-end">
-              <div class="input-group mb-3 float-end"></div>
-            </div>
-          </div>
           <div
             class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center"
           >
             <div class="container text-center">
               <div class="header">Permissions</div>
-
-              <br /><br />
               <div class="row">
                 <div class="card">
                   <div class="card-body">
@@ -65,6 +58,7 @@
       </div>
     </div>
   </div>
+  <footer-view></footer-view>
 </template>
 <script>
 import axios from "axios";
@@ -77,7 +71,7 @@ export default {
       permissions: [],
       api: import.meta.env.VITE_APP_API_URL,
       error: "",
-      pageSize: 10, // number of tasks to display per page
+      pageSize: 8, // number of tasks to display per page
       currentPage: 1 // current page number
     };
   },
@@ -132,3 +126,38 @@ export default {
   }
 };
 </script>
+<style scoped>
+.header {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.card {
+  width: 100%;
+  margin: 0 auto;
+  float: none;
+  margin-bottom: 10px;
+}
+
+.table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered thead th,
+.table-bordered thead td {
+  border-bottom-width: 2px;
+}
+</style>

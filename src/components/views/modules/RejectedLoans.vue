@@ -17,7 +17,7 @@
             class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center"
           >
             <div class="container text-center">
-              <div class="header">Pending Book Loans</div>
+              <div class="header">Rejected Book Loans</div>
               <div class="row">
                 <div class="card">
                   <div class="card-body">
@@ -46,7 +46,7 @@
                               <td>{{ bookLoan.can_date }}</td>
                               <td>{{ bookLoan.return_date }}</td>
                               <td>{{ bookLoan.status }}</td>
-                              <td>
+                              <td class="action">
                                 <button
                                   class="btn btn-danger btn-sm"
                                   @click="deleteBookLoan(bookLoan.id)"
@@ -81,24 +81,24 @@
 import axios from "axios";
 
 export default {
-  name: "PendingLoans",
+  name: "RejectedLoans",
   data() {
     return {
-      pendingBookLoans: [],
+      rejectedBookLoans: [],
       currentPage: 1,
       errorMessage: "",
-      pageSize: 7,
+      pageSize: 6,
       api: import.meta.env.VITE_APP_API_URL
     };
   },
   computed: {
     totalPages() {
-      return Math.ceil(this.pendingBookLoans.length / this.pageSize);
+      return Math.ceil(this.rejectedBookLoans.length / this.pageSize);
     },
     pagedBookLoans() {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = this.currentPage * this.pageSize;
-      return this.pendingBookLoans.slice(start, end);
+      return this.rejectedBookLoans.slice(start, end);
     }
   },
   methods: {
@@ -106,7 +106,7 @@ export default {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `${this.api}/bookloans/pending/loans`,
+          `${this.api}/bookloans/rejected/loans`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -114,7 +114,7 @@ export default {
           }
         );
 
-        this.pendingBookLoans = response.data.data;
+        this.rejectedBookLoans = response.data.data;
       } catch (error) {
         console.log(error);
         this.errorMessage = error.response.data.message;

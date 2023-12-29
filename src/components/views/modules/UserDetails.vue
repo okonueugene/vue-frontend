@@ -13,17 +13,20 @@
         <nav-bar></nav-bar>
         <!-- End of Topbar -->
         <div class="container mt-4 mb-4">
-          <div class="row justify-content-center">
-            <div class="col-md-6 float-end">
-              <div class="input-group mb-3 float-end"></div>
-            </div>
-          </div>
           <div
             class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center"
           >
             <div class="container text-center">
               <div class="header">User Details</div>
-              <br /><br />
+              <div class="add-user">
+                <a
+                  href="javascript:void(0)"
+                  class="btn btn-primary btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addUserModal"
+                  >Add User</a
+                >
+              </div>
               <div class="row">
                 <div class="card">
                   <div class="card-body">
@@ -77,6 +80,97 @@
       </div>
     </div>
   </div>
+
+  <div
+    class="modal fade"
+    id="addUserModal"
+    tabindex="-1"
+    aria-labelledby="addUserModal"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add User</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <form @submit.prevent="onSubmit">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                class="form-control"
+                v-model="formData.name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="text"
+                name="email"
+                id="email"
+                class="form-control"
+                v-model="formData.email"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                class="form-control"
+                v-model="formData.password"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password_confirmation">Confirm Password</label>
+              <input
+                type="password"
+                name="password_confirmation"
+                id="password_confirmation"
+                class="form-control"
+                v-model="formData.password_confirmation"
+              />
+            </div>
+            <div class="form-group">
+              <label for="role">Role</label>
+              <select
+                v-model="formData.role"
+                class="form-select"
+                aria-label="Default select example"
+              >
+                <option selected>Select Role</option>
+                <option
+                  v-for="(role, index) in roles"
+                  :key="role.id"
+                  :value="role.id"
+                >
+                  {{ role.name }}
+                </option>
+              </select>
+              <div class="error">
+                <span class="text-danger text-center" v-if="error">{{
+                  error
+                }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Add User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <footer-view></footer-view>
 </template>
 <script>
 import axios from "axios";
@@ -85,14 +179,18 @@ export default {
   name: "UserDetails",
   data() {
     return {
-      name: "",
-      email: "",
-      role: "",
+      formData: {
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        role: ""
+      },
+      roles: [],
       error: "",
       errorMessage: "",
       users: [],
       currentPage: 1,
-      totalPages: 0,
       pageSize: 8,
       api: import.meta.env.VITE_APP_API_URL
     };
@@ -102,6 +200,9 @@ export default {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = this.currentPage * this.pageSize;
       return this.users.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.users.length / this.pageSize);
     }
   },
   methods: {
@@ -126,7 +227,7 @@ export default {
       try {
         const token = localStorage.getItem("token");
         let url = `${this.api}/users`;
-        console.log("url", url);
+        // console.log("url", url);
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -135,20 +236,20 @@ export default {
 
         if (response.status === 200) {
           this.users = response.data.data;
-          this.totalPages = Math.ceil(this.users.length / this.pageSize);
         } else {
           this.error = response.data.message;
           this.errorMessage = response.data.message;
         }
       } catch (error) {
         this.error = error.response.data.message;
+        this.errorMessage = error.response.data.message;
       }
     },
     async deleteUser(id) {
       try {
         const token = localStorage.getItem("token");
-        console.log("token", token);
         let url = `${this.api}/users/${id}`;
+        console.log("url", url);
 
         const response = await axios.delete(url, {
           headers: {
@@ -157,9 +258,73 @@ export default {
         });
 
         if (response.status === 200) {
-          this.users = response.data.data;
+          console.log("response", response);
+          // Remove the deleted user from the users array
+          this.users = this.users.filter((user) => user.id !== id);
 
+          // Display success message
+          iziToast.success({
+            title: "Success",
+            message: response.data.message,
+            position: "topRight",
+            timeout: 2000
+          });
+        } else {
+          this.error = response.data.message;
+          this.errorMessage = response.data.message;
+        }
+      } catch (error) {
+        this.error = error.response.data.message;
+        this.errorMessage = error.response.data.message;
+      }
+    },
+
+    async onSubmit() {
+      try {
+        const token = localStorage.getItem("token");
+        let url = `${this.api}/users`;
+        const response = await axios.post(url, this.formData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 201) {
+          //reset the form
+          this.formData = {
+            name: "",
+            email: "",
+            password: "",
+            password_confirmation: "",
+            role: ""
+          };
+          //close modal
+          $("#addUserModal").modal("hide");
+          // Fetch users again to refresh the list
           this.fetchUsers();
+        } else {
+          this.error = response.data.message;
+          this.errorMessage = response.data.message;
+        }
+      } catch (error) {
+        this.error = error.response.data.message;
+        this.errorMessage = error.response.data.message;
+      }
+    },
+
+    async fetchRoles() {
+      try {
+        const token = localStorage.getItem("token");
+        let url = `${this.api}/roles`;
+        // console.log("url", url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 200) {
+          this.roles = response.data.data;
         } else {
           this.error = response.data.message;
           this.errorMessage = response.data.message;
@@ -185,6 +350,50 @@ export default {
   },
   mounted() {
     this.fetchUsers();
+    this.fetchRoles();
   }
 };
 </script>
+<style scoped>
+.header {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.error {
+  font-size: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  width: fit-content;
+  flex-direction: column;
+}
+
+.error span {
+  color: red;
+}
+
+.error p {
+  color: red;
+}
+.add-user {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+.action {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.search {
+  position: relative;
+  left: 70%;
+  width: 30%;
+}
+</style>

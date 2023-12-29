@@ -61,6 +61,7 @@
       </div>
     </div>
   </div>
+  <footer-view></footer-view>
 </template>
 <script>
 import axios from "axios";
@@ -71,6 +72,7 @@ export default {
     return {
       roles: [],
       api: import.meta.env.VITE_APP_API_URL,
+      errorMessage: "",
       error: "",
       pageSize: 2, // number of tasks to display per page
       currentPage: 1 // current page number
@@ -115,9 +117,25 @@ export default {
           this.roles = response.data.data;
         } else {
           this.error = response.data.message;
+          this.errorMessage = this.error;
         }
       } catch (error) {
         console.log(error);
+        this.error = error.response.data.message;
+        this.errorMessage = this.error;
+      }
+    },
+    displayErrorMessage() {
+      if (this.errorMessage) {
+        iziToast.error({
+          title: "Error",
+          message: this.errorMessage,
+          position: "topRight",
+          timeout: 2000
+        });
+
+        // Reset the error message after displaying
+        this.errorMessage = "";
       }
     }
   },
@@ -126,3 +144,38 @@ export default {
   }
 };
 </script>
+<style scoped>
+.header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card {
+  width: 100%;
+  margin: 0 auto;
+  float: none;
+  margin-bottom: 10px;
+}
+
+.table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered thead th,
+.table-bordered thead td {
+  border-bottom-width: 2px;
+}
+</style>

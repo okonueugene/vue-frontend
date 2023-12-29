@@ -17,7 +17,7 @@
             class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center"
           >
             <div class="container text-center">
-              <div class="header">Pending Book Loans</div>
+              <div class="header">Overdue Book Loans</div>
               <div class="row">
                 <div class="card">
                   <div class="card-body">
@@ -30,8 +30,10 @@
                               <th>Book</th>
                               <th>User</th>
                               <th>Loan Date</th>
-                              <th>Return Date</th>
-                              <th>Status</th>
+                              <th>Due Date</th>
+                              <th>Extended</th>
+                              <th>Penalty Status</th>
+                              <th>Penalty Amount</th>
                               <th>Actions</th>
                             </tr>
                           </thead>
@@ -44,8 +46,11 @@
                               <td>{{ bookLoan.book_name }}</td>
                               <td>{{ bookLoan.borrower }}</td>
                               <td>{{ bookLoan.can_date }}</td>
-                              <td>{{ bookLoan.return_date }}</td>
-                              <td>{{ bookLoan.status }}</td>
+                              <td>{{ bookLoan.due_date }}</td>
+                              <td>{{ bookLoan.extended }}</td>
+                              <td>{{ bookLoan.penalty_status }}</td>
+                              <td>{{ bookLoan.penalty_amount }}</td>
+
                               <td>
                                 <button
                                   class="btn btn-danger btn-sm"
@@ -81,24 +86,23 @@
 import axios from "axios";
 
 export default {
-  name: "PendingLoans",
+  name: "OverdueLoans",
   data() {
     return {
-      pendingBookLoans: [],
+      overdueBookLoans: [],
       currentPage: 1,
-      errorMessage: "",
-      pageSize: 7,
+      pageSize: 5,
       api: import.meta.env.VITE_APP_API_URL
     };
   },
   computed: {
     totalPages() {
-      return Math.ceil(this.pendingBookLoans.length / this.pageSize);
+      return Math.ceil(this.overdueBookLoans.length / this.pageSize);
     },
     pagedBookLoans() {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = this.currentPage * this.pageSize;
-      return this.pendingBookLoans.slice(start, end);
+      return this.overdueBookLoans.slice(start, end);
     }
   },
   methods: {
@@ -106,7 +110,7 @@ export default {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `${this.api}/bookloans/pending/loans`,
+          `${this.api}/bookloans/overdue/loans`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -114,10 +118,9 @@ export default {
           }
         );
 
-        this.pendingBookLoans = response.data.data;
+        this.overdueBookLoans = response.data.data;
       } catch (error) {
         console.log(error);
-        this.errorMessage = error.response.data.message;
       }
     },
     changePage(page) {
@@ -134,19 +137,6 @@ export default {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
         this.getBookLoans();
-      }
-    },
-    displayErrorMessage() {
-      if (this.errorMessage) {
-        iziToast.error({
-          title: "Error",
-          message: this.errorMessage,
-          position: "topRight",
-          timeout: 2000
-        });
-
-        // Reset the error message after displaying
-        this.errorMessage = "";
       }
     }
   },

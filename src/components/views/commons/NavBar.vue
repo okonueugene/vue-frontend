@@ -10,7 +10,11 @@
       <i class="fa fa-bars"></i>
     </button>
 
-    <div style="position: absolute; left: 50%">Library</div>
+    <div
+      style="position: absolute; left: 50%; font-size: 20px; font-style: italic"
+    >
+      Open-Lib
+    </div>
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
       <div class="topbar-divider d-none d-sm-block"></div>
@@ -37,6 +41,11 @@
           class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
           aria-labelledby="userDropdown"
         >
+          <a class="dropdown-item" href="/profile">
+            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+            {{ user.name }}
+          </a>
+
           <div class="dropdown-divider"></div>
           <a
             class="dropdown-item"
@@ -62,7 +71,8 @@ export default {
     return {
       error: "",
       user: {},
-      api: import.meta.env.VITE_APP_API_URL
+      api: import.meta.env.VITE_APP_API_URL,
+      user: JSON.parse(localStorage.getItem("user"))
     };
   },
   methods: {
@@ -102,3 +112,55 @@ export default {
   }
 };
 </script>
+<style scoped>
+.topbar {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  transition: all 0.5s ease;
+}
+
+.topbar .navbar-nav {
+  height: 80px;
+  align-items: center;
+}
+
+.topbar .navbar-nav .nav-item {
+  height: 80px;
+}
+
+.topbar .navbar-nav .nav-item .nav-link {
+  height: 80px;
+  padding: 0 1rem;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.5;
+  transition: all 0.5s ease;
+}
+
+.topbar .navbar-nav .nav-item .nav-link:hover {
+  color: #fff;
+}
+
+.topbar .navbar-nav .nav-item .nav-link .img-profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.topbar .navbar-nav .nav-item .nav-link .img-profile:hover {
+  opacity: 0.8;
+}
+
+.topbar .navbar-nav .nav-item .nav-link .badge-counter {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.1rem 0.35rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+}
+</style>

@@ -40,7 +40,7 @@
     <hr class="sidebar-divider" />
     <li class="nav-item">
       <a class="nav-link collapsed" href="/subcategories">
-        <i class="fas fa-fw fa-wrench"></i>
+        <i class="fas fa-fw fa-cog"></i>
         <span>Sub-Categories</span>
       </a>
     </li>
@@ -73,24 +73,24 @@
         aria-labelledby="bookLoansDropdown"
       >
         <li>
-          <a class="dropdown-item text-white" href="/booklo">Loaned Books</a>
+          <a class="dropdown-item text-white" href="/loanbooks">Book Loans</a>
         </li>
         <li>
-          <a class="dropdown-item text-white" href="/userdetails">Approved</a>
+          <a class="dropdown-item text-white" href="/approvedloans">Approved</a>
         </li>
         <li>
-          <a class="dropdown-item text-white" href="/roles">Rejected</a>
+          <a class="dropdown-item text-white" href="/rejectedloans">Rejected</a>
         </li>
         <li>
-          <a class="dropdown-item text-white" href="/permissions">Pending</a>
-        </li>
-
-        <li>
-          <a class="dropdown-item text-white" href="/permissions">Returned</a>
+          <a class="dropdown-item text-white" href="/pendingloans">Pending</a>
         </li>
 
         <li>
-          <a class="dropdown-item text-white" href="/permissions">Overdue</a>
+          <a class="dropdown-item text-white" href="/returnedbooks">Returned</a>
+        </li>
+
+        <li>
+          <a class="dropdown-item text-white" href="/overdueloans">Overdue</a>
         </li>
       </ul>
     </li>

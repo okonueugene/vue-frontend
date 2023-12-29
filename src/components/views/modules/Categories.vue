@@ -13,102 +13,109 @@
         <nav-bar></nav-bar>
         <!-- End of Topbar -->
         <div class="container mt-4 mb-4">
-          <div class="row justify-content-center">
-            <div class="col-md-6 float-end">
-              <div class="input-group mb-3 float-end"></div>
-            </div>
-          </div>
           <div
             class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center"
           >
             <div class="container text-center">
-              <div class="header">Add Category</div>
-              <div class="row">
-                <div class="col">
-                  <div class="card">
-                    <div class="card-body">
-                      <form @submit.prevent="onSubmit">
-                        <div class="mb-3">
-                          <label for="name" class="form-label">Name</label>
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="name"
-                            v-model="name"
-                          />
-                        </div>
-                        <div class="mb-3">
-                          <label for="description" class="form-label"
-                            >Description</label
-                          >
-                          <textarea
-                            class="form-control"
-                            id="description"
-                            rows="3"
-                            v-model="description"
-                          ></textarea>
-                        </div>
+              <div class="header">Categories</div>
 
-                        <button type="submit" class="btn btn-primary">
-                          Submit
-                        </button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <br /><br />
-              <div class="error">
-                <span class="text-danger" v-if="error">{{ error }}</span>
-              </div>
-
-              <br /><br />
-              <div class="row">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="header">Categories</div>
-                    <div class="row">
-                      <div class="table-responsive">
-                        <table class="table table-bordered">
-                          <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>Name</th>
-                              <th>Description</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr v-if="pagedCategories.length === 0">
-                              <td colspan="3">No categories found</td>
-                            </tr>
-                            <tr
-                              v-else
-                              v-for="(category, index) in pagedCategories"
-                            >
-                              <td>{{ category.id }}</td>
-                              <td>{{ category.name }}</td>
-                              <td>{{ category.description }}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    <pagination
-                      :totalPages="totalPages"
-                      :currentPage="currentPage"
-                      @changePage="changePage"
-                      @previousPage="previousPage"
-                      @nextPage="nextPage"
-                    ></pagination>
-                  </div>
-                </div>
+              <div class="add-category">
+                <a
+                  href="javascript:void(0)"
+                  class="btn btn-primary btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addCategoryModal"
+                  >Add Category</a
+                >
               </div>
             </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-if="pagedCategories.length === 0">
+                      <td class="text-center" colspan="3">
+                        No categories found
+                      </td>
+                    </tr>
+                    <tr v-else v-for="(category, index) in pagedCategories">
+                      <td>{{ category.id }}</td>
+                      <td>{{ category.name }}</td>
+                      <td>{{ category.description }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <pagination
+              :totalPages="totalPages"
+              :currentPage="currentPage"
+              @changePage="changePage"
+              @previousPage="previousPage"
+              @nextPage="nextPage"
+            ></pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="addCategoryModal"
+      tabindex="-1"
+      aria-labelledby="addCategoryModal"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Category</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="onSubmit">
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  v-model="name"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  id="description"
+                  rows="3"
+                  v-model="description"
+                ></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <footer-view></footer-view>
 </template>
 
 <script>
@@ -185,6 +192,11 @@ export default {
           //reset the form
           this.name = "";
           this.description = "";
+          // Close the modal
+          $("#addCategoryModal").modal("hide");
+          // Reset the error
+          this.error = null;
+          window.location.reload();
           // Fetch categories again to refresh the list
           this.fetchCategories();
         } else {
@@ -232,11 +244,54 @@ export default {
 </script>
 <style scoped>
 .error {
-  position: relative;
-  left: 45%;
-  margin-top: 10px;
   font-size: 15px;
-  align-items: center;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  width: fit-content;
+  flex-direction: column;
+}
+.header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card {
+  width: 100%;
+  margin: 0 auto;
+  float: none;
+  margin-bottom: 10px;
+}
+
+.table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+.add-category {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+.action {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
 }
 </style>

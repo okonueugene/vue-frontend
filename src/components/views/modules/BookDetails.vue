@@ -45,9 +45,21 @@
                   </div>
                 </div>
                 <div class="borrow">
-                  <button class="btn btn-success">Borrow</button>
-
-                  <button class="btn btn-danger">Return</button>
+                  <button
+                    class="btn btn-success"
+                    @click="borrowBook(book.id, user.id)"
+                  >
+                    Borrow
+                  </button>
+                  <button class="btn btn-warning" @click="extendBook(book.id)">
+                    Extend
+                  </button>
+                  <button class="btn btn-danger" @click="returnBook(book.id)">
+                    Return
+                  </button>
+                </div>
+                <div class="error">
+                  <p>{{ errorMessage }}</p>
                 </div>
               </div>
             </div>
@@ -67,6 +79,9 @@ export default {
       book: {},
       api: import.meta.env.VITE_APP_API_URL,
       files: import.meta.env.VITE_APP_MEDIA_URL,
+      user: JSON.parse(localStorage.getItem("user")),
+      error: null,
+      errorMessage: null,
       placeholder:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     };
@@ -124,15 +139,52 @@ export default {
         }
       } catch (error) {
         console.error("Failed to fetch book details:", error.message);
+        this.errorMessage = error.message;
       }
     },
-    async borrowBook() {
+    async borrowBook(id, user) {
       try {
         const token = localStorage.getItem("token");
-        const bookId = this.$route.params.id; // Access id from route parameters
 
         const response = await axios.post(
-          `${this.api}/books/${bookId}/borrow`,
+          `${this.api}/bookloans`,
+          {
+            user_id: user,
+            book_id: id
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        if (response.status === 201) {
+          iziToast.success({
+            title: "Success",
+            message: "Book borrowed successfully",
+            position: "topRight"
+          });
+
+          this.$router.go(-1);
+        } else {
+          console.error(
+            `Fetch book details failed with status code ${response.status}`
+          );
+          this.errorMessage = error.response.data.message;
+        }
+      } catch (error) {
+        console.error("Failed to fetch book details:", error.message);
+        console.log(error.response.data.message);
+        this.errorMessage = error.response.data.message;
+      }
+    },
+    async returnBook(id) {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.post(
+          `${this.api}/bookloans/return/${id}`,
           {},
           {
             headers: {
@@ -142,8 +194,13 @@ export default {
         );
 
         if (response.status === 200) {
-          this.book = response.data.data;
-          console.log("book", this.book);
+          iziToast.success({
+            title: "Success",
+            message: "Book returned successfully",
+            position: "topRight"
+          });
+
+          this.$router.go(-1);
         } else {
           console.error(
             `Fetch book details failed with status code ${response.status}`
@@ -151,34 +208,48 @@ export default {
         }
       } catch (error) {
         console.error("Failed to fetch book details:", error.message);
+        console.log(error.response);
+        this.errorMessage =
+          error.response.status === 500
+            ? "Book loan not approved or has already been returned"
+            : error.response.data.message;
       }
-    }
-  },
-  async returnBook() {
-    try {
-      const token = localStorage.getItem("token");
-      const bookId = this.$route.params.id; // Access id from route parameters
+    },
+    async extendBook(id) {
+      try {
+        const token = localStorage.getItem("token");
 
-      const response = await axios.post(
-        `${this.api}/books/${bookId}/return`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const response = await axios.post(
+          `${this.api}/bookloans/extend/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        }
-      );
-
-      if (response.status === 200) {
-        this.book = response.data.data;
-        console.log("book", this.book);
-      } else {
-        console.error(
-          `Fetch book details failed with status code ${response.status}`
         );
+
+        if (response.status === 200) {
+          iziToast.success({
+            title: "Success",
+            message: "Book extended successfully",
+            position: "topRight"
+          });
+
+          this.$router.go(-1);
+        } else {
+          console.error(
+            `Fetch book details failed with status code ${response.status}`
+          );
+        }
+      } catch (error) {
+        console.error("Failed to fetch book details:", error.message);
+        console.log(error.response);
+        this.errorMessage =
+          error.response.status === 404
+            ? "Book loan not approved or has already been returned"
+            : error.response.data.message;
       }
-    } catch (error) {
-      console.error("Failed to fetch book details:", error.message);
     }
   }
 };
@@ -232,5 +303,23 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+.borrow button {
+  margin-right: 1rem;
+}
+.borrow button:last-child {
+  margin-right: 0;
+}
+
+.error {
+  font-size: 15px;
+  color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  flex-direction: column;
+  position: relative;
+  left: 6%;
 }
 </style>

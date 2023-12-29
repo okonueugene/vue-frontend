@@ -11,6 +11,13 @@ import LoanBookPage from "../components/views/modules/LoanBooks.vue";
 import UserDetailsPage from "../components/views/modules/UserDetails.vue";
 import RolesPage from "../components/views/modules/Roles.vue";
 import PermissionsPage from "../components/views/modules/Permissions.vue";
+import ApprovedLoansPage from "../components/views/modules/ApprovedLoans.vue";
+import ReturnedBooksPage from "../components/views/modules/ReturnedBooks.vue";
+import PendingLoansPage from "../components/views/modules/PendingLoans.vue";
+import RejectedLoansPage from "../components/views/modules/RejectedLoans.vue";
+import OverdueLoansPage from "../components/views/modules/OverdueLoans.vue";
+import NotFoundPage from "../components/views/commons/NotFound.vue";
+import ProfilePage from "../components/views/modules/Profile.vue";
 
 const routes = [
   {
@@ -22,6 +29,22 @@ const routes = [
     path: "/register",
     name: "RegisterPage",
     component: RegisterPage
+  },
+  {
+    path: "/profile",
+    name: "ProfilePage",
+    component: ProfilePage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+      if (isAuthenticated) {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
   },
   {
     path: "/userdetails",
@@ -264,6 +287,103 @@ const routes = [
         next("/");
       }
     }
+  },
+
+  {
+    path: "/approvedloans",
+    name: "ApprovedLoansPage",
+    component: ApprovedLoansPage,
+    // props: (route) => ({ id: parseInt(route.params.id) }),
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+
+  {
+    path: "/returnedbooks",
+    name: "ReturnedBooksPage",
+    component: ReturnedBooksPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+
+  {
+    path: "/pendingloans",
+    name: "PendingLoansPage",
+    component: PendingLoansPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+
+  {
+    path: "/rejectedloans",
+    name: "RejectedLoansPage",
+    component: RejectedLoansPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+
+  {
+    path: "/overdueloans",
+    name: "OverdueLoansPage",
+    component: OverdueLoansPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+      if (isAuthenticated && role == "admin") {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
+
+  {
+    path: "/:catchAll(.*)",
+    name: "NotFoundPage",
+    component: NotFoundPage
   }
 ];
 
