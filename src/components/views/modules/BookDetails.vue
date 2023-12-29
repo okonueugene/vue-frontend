@@ -51,12 +51,6 @@
                   >
                     Borrow
                   </button>
-                  <button class="btn btn-warning" @click="extendBook(book.id)">
-                    Extend
-                  </button>
-                  <button class="btn btn-danger" @click="returnBook(book.id)">
-                    Return
-                  </button>
                 </div>
                 <div class="error">
                   <p>{{ errorMessage }}</p>
@@ -177,78 +171,6 @@ export default {
         console.error("Failed to fetch book details:", error.message);
         console.log(error.response.data.message);
         this.errorMessage = error.response.data.message;
-      }
-    },
-    async returnBook(id) {
-      try {
-        const token = localStorage.getItem("token");
-
-        const response = await axios.post(
-          `${this.api}/bookloans/return/${id}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        if (response.status === 200) {
-          iziToast.success({
-            title: "Success",
-            message: "Book returned successfully",
-            position: "topRight"
-          });
-
-          this.$router.go(-1);
-        } else {
-          console.error(
-            `Fetch book details failed with status code ${response.status}`
-          );
-        }
-      } catch (error) {
-        console.error("Failed to fetch book details:", error.message);
-        console.log(error.response);
-        this.errorMessage =
-          error.response.status === 500
-            ? "Book loan not approved or has already been returned"
-            : error.response.data.message;
-      }
-    },
-    async extendBook(id) {
-      try {
-        const token = localStorage.getItem("token");
-
-        const response = await axios.post(
-          `${this.api}/bookloans/extend/${id}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        if (response.status === 200) {
-          iziToast.success({
-            title: "Success",
-            message: "Book extended successfully",
-            position: "topRight"
-          });
-
-          this.$router.go(-1);
-        } else {
-          console.error(
-            `Fetch book details failed with status code ${response.status}`
-          );
-        }
-      } catch (error) {
-        console.error("Failed to fetch book details:", error.message);
-        console.log(error.response);
-        this.errorMessage =
-          error.response.status === 404
-            ? "Book loan not approved or has already been returned"
-            : error.response.data.message;
       }
     }
   }

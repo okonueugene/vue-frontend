@@ -454,7 +454,6 @@ export default {
         this.errorMessage = "";
       }
     }
-    //pass the book id to the book details page
   }
 };
 </script>

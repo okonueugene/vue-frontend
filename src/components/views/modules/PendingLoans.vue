@@ -142,6 +142,58 @@ export default {
         this.getBookLoans();
       }
     },
+    async approveBookLoan(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${this.api}/bookloans/approve/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        this.getBookLoans();
+        iziToast.success({
+          title: "Success",
+          message: response.data.message,
+          position: "topRight",
+          timeout: 2000
+        });
+      } catch (error) {
+        console.log(error);
+        this.errorMessage = error.response.data.message;
+        this.displayErrorMessage();
+      }
+    },
+    async rejectBookLoan(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${this.api}/bookloans/reject/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        this.getBookLoans();
+        iziToast.success({
+          title: "Success",
+          message: response.data.message,
+          position: "topRight",
+          timeout: 2000
+        });
+      } catch (error) {
+        console.log(error);
+        this.errorMessage = error.response.data.message;
+        this.displayErrorMessage();
+      }
+    },
     displayErrorMessage() {
       if (this.errorMessage) {
         iziToast.error({

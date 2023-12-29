@@ -65,16 +65,16 @@
                               <td>{{ bookLoan.status }}</td>
                               <td class="action">
                                 <button
-                                  class="btn btn-primary btn-sm"
-                                  @click="viewBookLoan(bookLoan.id)"
+                                  class="btn btn-success btn-sm"
+                                  @click="extendBookLoan(bookLoan.id)"
                                 >
-                                  View
+                                  Extend
                                 </button>
                                 <button
-                                  class="btn btn-danger btn-sm"
-                                  @click="deleteBookLoan(bookLoan.id)"
+                                  class="btn btn-warning btn-sm"
+                                  @click="returnBook(bookLoan.id)"
                                 >
-                                  Delete
+                                  Return
                                 </button>
                               </td>
                             </tr>
@@ -107,6 +107,7 @@ export default {
   data() {
     return {
       bookLoans: [],
+      search: "",
       name: "",
       description: "",
       error: "",
@@ -160,30 +161,69 @@ export default {
         this.error = error.response.data.message;
       }
     },
-    displayErrorMessage() {
-      if (this.errorMessage) {
-        iziToast.error({
-          title: "Error",
-          message: this.error,
+    async returnBook(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${this.api}/bookloans/return/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        console.log(response);
+
+        this.fetchBookLoans();
+        iziToast.success({
+          title: "Success",
+          message: response.data.message,
           position: "topRight",
           timeout: 2000
         });
-
-        // Reset the error message after displaying
-        this.errorMessage = "";
+      } catch (error) {
+        this.error = error.response.data.message;
+        iziToast.error({
+          title: "Error",
+          message: error.response.data.message,
+          position: "topRight",
+          timeout: 2000
+        });
+      }
+    },
+    async extendBookLoan(id) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${this.api}/bookloans/extend/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        this.fetchBookLoans();
+        iziToast.success({
+          title: "Success",
+          message: response.data.message,
+          position: "topRight",
+          timeout: 2000
+        });
+      } catch (error) {
+        this.error = error.response.data.message;
+        iziToast.error({
+          title: "Error",
+          message: error.response.data.message,
+          position: "topRight",
+          timeout: 2000
+        });
       }
     }
   },
 
-  created() {
-    this.fetchBookLoans();
-  },
-
   mounted() {
-    this.fetchBookLoans();
-  },
-
-  updated() {
     this.fetchBookLoans();
   }
 };
