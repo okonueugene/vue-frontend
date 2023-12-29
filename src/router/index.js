@@ -18,6 +18,7 @@ import RejectedLoansPage from "../components/views/modules/RejectedLoans.vue";
 import OverdueLoansPage from "../components/views/modules/OverdueLoans.vue";
 import NotFoundPage from "../components/views/commons/NotFound.vue";
 import ProfilePage from "../components/views/modules/Profile.vue";
+import MyBooksPage from "../components/views/modules/MyBookLoans.vue";
 
 const routes = [
   {
@@ -379,7 +380,23 @@ const routes = [
       }
     }
   },
-
+  {
+    path: "/mybookloans",
+    name: "MyBooksPage",
+    component: MyBooksPage,
+    beforeEnter: (to, from, next) => {
+      const isAuthenticated = localStorage.getItem("isAuthenticated");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user.role;
+      if (isAuthenticated) {
+        // Proceed to the route if the user is authenticated
+        next();
+      } else {
+        // Redirect to the login page if the user is not authenticated
+        next("/");
+      }
+    }
+  },
   {
     path: "/:catchAll(.*)",
     name: "NotFoundPage",

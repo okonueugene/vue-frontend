@@ -18,7 +18,7 @@
           >
             <div class="container text-center">
               <div class="header">
-                Book Loans
+                My Book Loans
                 <div class="search">
                   <div class="input-group mb-3 float-end">
                     <input
@@ -111,7 +111,7 @@ export default {
       description: "",
       error: "",
       currentPage: 1,
-      pageSize: 9,
+      pageSize: 5,
       api: import.meta.env.VITE_APP_API_URL
     };
   },
@@ -145,11 +145,16 @@ export default {
     async fetchBookLoans() {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`${this.api}/bookloans`, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        let user = JSON.parse(localStorage.getItem("user"));
+        var id = user.id;
+        const response = await axios.get(
+          `${this.api}/bookloans/user/loans/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        });
+        );
         this.bookLoans = response.data.data;
       } catch (error) {
         this.error = error.response.data.message;

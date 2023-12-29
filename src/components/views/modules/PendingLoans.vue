@@ -46,12 +46,18 @@
                               <td>{{ bookLoan.can_date }}</td>
                               <td>{{ bookLoan.return_date }}</td>
                               <td>{{ bookLoan.status }}</td>
-                              <td>
+                              <td class="action">
+                                <button
+                                  class="btn btn-success btn-sm"
+                                  @click="approveBookLoan(bookLoan.id)"
+                                >
+                                  Approve
+                                </button>
                                 <button
                                   class="btn btn-danger btn-sm"
-                                  @click="deleteBookLoan(bookLoan.id)"
+                                  @click="rejectBookLoan(bookLoan.id)"
                                 >
-                                  Delete
+                                  Reject
                                 </button>
                               </td>
                             </tr>
@@ -192,7 +198,7 @@ export default {
 .action {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
 }

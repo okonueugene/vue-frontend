@@ -73,6 +73,11 @@
         aria-labelledby="bookLoansDropdown"
       >
         <li>
+          <a class="dropdown-item text-white" href="/mybookloans"
+            >My Book Loans</a
+          >
+        </li>
+        <li>
           <a class="dropdown-item text-white" href="/loanbooks">Book Loans</a>
         </li>
         <li>
