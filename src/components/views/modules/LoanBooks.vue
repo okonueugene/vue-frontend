@@ -202,6 +202,7 @@ export default {
 
         // Fetch updated book loans after deletion
         this.fetchBookLoans();
+        this.applyFilter();
       } catch (error) {
         console.log(error);
         // Display error message

@@ -144,6 +144,7 @@ export default {
             timeout: 2000
           });
           this.getBookLoans();
+          this.applyFilter();
         }
       } catch (error) {
         console.log(error);
@@ -158,17 +159,20 @@ export default {
     changePage(page) {
       this.currentPage = page;
       this.getBookLoans();
+      this.applyFilter();
     },
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
         this.getBookLoans();
+        this.applyFilter();
       }
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
         this.getBookLoans();
+        this.applyFilter();
       }
     },
     displayErrorMessage() {

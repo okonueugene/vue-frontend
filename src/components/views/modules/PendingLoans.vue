@@ -161,6 +161,7 @@ export default {
         );
 
         this.getBookLoans();
+        this.applyFilter();
         iziToast.success({
           title: "Success",
           message: response.data.message,
@@ -187,6 +188,7 @@ export default {
         );
 
         this.getBookLoans();
+        this.applyFilter();
         iziToast.success({
           title: "Success",
           message: response.data.message,
