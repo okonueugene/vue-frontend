@@ -17,15 +17,24 @@
             class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center"
           >
             <div class="container text-center">
-              <div class="header">User Details</div>
-              <div class="add-user">
-                <a
-                  href="javascript:void(0)"
-                  class="btn btn-primary btn-sm"
-                  data-bs-toggle="modal"
-                  data-bs-target="#addUserModal"
-                  >Add User</a
-                >
+              <div class="header">
+                Manage users
+                <div class="search">
+                  <div class="input-group mb-3 float-end">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Search"
+                      aria-label="Search"
+                      aria-describedby="basic-addon2"
+                      v-model="search"
+                      @input="applyFilter"
+                    />
+                    <span class="input-group-text" id="basic-addon2"
+                      ><i class="fas fa-search"></i
+                    ></span>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <div class="card">
@@ -193,6 +202,8 @@ export default {
       },
       roles: [],
       error: "",
+      search: "",
+      filteredUsers: [],
       errorMessage: "",
       users: [],
       currentPage: 1,
@@ -202,9 +213,13 @@ export default {
   },
   computed: {
     pagedUsers() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      const end = this.currentPage * this.pageSize;
-      return this.users.slice(start, end);
+      if (this.filteredUsers.length > 0) {
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return this.filteredUsers.slice(start, end);
+      } else {
+        return [];
+      }
     },
     totalPages() {
       return Math.ceil(this.users.length / this.pageSize);
@@ -241,6 +256,7 @@ export default {
 
         if (response.status === 200) {
           this.users = response.data.data;
+          this.applyFilter();
         } else {
           this.error = response.data.message;
           this.errorMessage = response.data.message;
@@ -281,6 +297,7 @@ export default {
       } catch (error) {
         this.error = error.response.data.message;
         this.errorMessage = error.response.data.message;
+        console.log("error", error);
       }
     },
 
@@ -351,6 +368,15 @@ export default {
         // Reset the error message after displaying
         this.errorMessage = "";
       }
+    },
+    applyFilter() {
+      this.filteredUsers = this.users.filter((user) => {
+        const searchTerm = this.search.toLowerCase();
+        return (
+          user.name.toLowerCase().includes(searchTerm) ||
+          user.email.toLowerCase().includes(searchTerm)
+        );
+      });
     }
   },
   mounted() {

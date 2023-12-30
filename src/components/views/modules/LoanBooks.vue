@@ -166,6 +166,7 @@ export default {
         this.applyFilter();
       } catch (error) {
         this.error = error.response.data.message;
+        console.log(error);
       }
     },
     displayErrorMessage() {
