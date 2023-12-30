@@ -20,7 +20,8 @@ axios.interceptors.response.use(
       // Handle 401 error (unauthorized)
       iziToast.error({
         title: "Error",
-        message: "You are not authorized to access this resource.",
+        message:
+          "You are not authorized to access this resource.Please login first.",
         position: "topRight"
       });
       router.push({ name: "LoginPage" });

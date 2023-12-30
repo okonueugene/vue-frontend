@@ -45,6 +45,11 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <tr v-if="error">
+                      <td class="text-center" colspan="3">
+                        <div class="error">{{ error }}</div>
+                      </td>
+                    </tr>
                     <tr v-if="pagedCategories.length === 0">
                       <td class="text-center" colspan="3">
                         No categories found

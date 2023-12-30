@@ -43,6 +43,11 @@
                             </tr>
                           </thead>
                           <tbody>
+                            <tr v-if="users.length === 0">
+                              <td colspan="5" class="text-center">
+                                No users found
+                              </td>
+                            </tr>
                             <tr
                               v-for="(user, index) in pagedUsers"
                               :key="user.id"

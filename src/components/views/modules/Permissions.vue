@@ -31,6 +31,11 @@
                             </tr>
                           </thead>
                           <tbody>
+                            <tr v-if="permissions.length === 0">
+                              <td colspan="2" class="text-center">
+                                No permissions found
+                              </td>
+                            </tr>
                             <tr
                               v-for="(permission, index) in pagedPermissions"
                               :key="permission.id"

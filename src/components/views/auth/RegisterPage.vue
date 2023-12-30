@@ -54,7 +54,7 @@
                         class="form-control form-control-user"
                         id="exampleRepeatPassword"
                         placeholder="Repeat Password"
-                        v-model="password_confirmation"
+                        v-model="password_confirmed"
                         required
                       />
                     </div>
@@ -90,11 +90,10 @@ axios.defaults.headers.common["X-CSRF-TOKEN"] = document
 export default {
   data() {
     return {
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
       password: "",
-      passwordConfirmed: "",
+      password_confirmed: "",
       name: "",
       errorMessage: "",
       api: null
@@ -105,33 +104,33 @@ export default {
   },
   methods: {
     async register() {
-      if (this.password !== this.password_confirmation) {
+      if (this.password !== this.password_confirmed) {
         this.errorMessage =
           "The password and confirmation password do not match.";
         return;
       }
 
       try {
-        const url = `${this.api}/users`;
+        const url = `${this.api}/users/register`;
         const response = await axios.post(url, {
           //set headers
           headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            Authorization: "Bearer " + localStorage.getItem("token")
+            "Access-Control-Allow-Origin": "*"
           },
-          name: `${this.firstName} ${this.lastName}`,
-          email_address: this.email,
+          name: this.name,
+          email: this.email,
           password: this.password,
-          password_confirmed: this.passwordConfirmed
+          password_confirmed: this.password_confirmed
         });
+        console.log(response);
         this.$router.push("/");
       } catch (error) {
         if (error.response.data.email_address) {
           this.errorMessage = error.response.data.email[0];
         } else {
-          this.errorMessage =
-            "An error occurred while registering. Please try again.";
+          console.log(error.response.data);
+          this.errorMessage = error.response.data.message;
         }
       }
     }

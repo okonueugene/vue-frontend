@@ -37,6 +37,11 @@
                             </tr>
                           </thead>
                           <tbody>
+                            <tr v-if="roles.length === 0">
+                              <td colspan="2" class="text-center">
+                                No roles found
+                              </td>
+                            </tr>
                             <tr v-for="(role, index) in roles" :key="role.id">
                               <td>{{ role.id }}</td>
                               <td>{{ role.name }}</td>

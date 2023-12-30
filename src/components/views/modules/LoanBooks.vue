@@ -54,6 +54,11 @@
                             </tr>
                           </thead>
                           <tbody>
+                            <tr v-if="pagedBookLoans.length === 0">
+                              <td colspan="7" class="text-center">
+                                No book loans found
+                              </td>
+                            </tr>
                             <tr
                               v-for="(bookLoan, index) in pagedBookLoans"
                               :key="bookLoan.id"
