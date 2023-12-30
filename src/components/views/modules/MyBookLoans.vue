@@ -28,6 +28,7 @@
                       aria-label="Search"
                       aria-describedby="basic-addon2"
                       v-model="search"
+                      @input="applyFilter"
                     />
                     <span class="input-group-text" id="basic-addon2"
                       ><i class="fas fa-search"></i
@@ -108,6 +109,7 @@ export default {
     return {
       bookLoans: [],
       search: "",
+      filteredBookLoans: [],
       name: "",
       description: "",
       error: "",
@@ -119,12 +121,16 @@ export default {
 
   computed: {
     totalPages() {
-      return Math.ceil(this.bookLoans.length / this.pageSize);
+      return Math.ceil(this.filteredBookLoans.length / this.pageSize);
     },
     pagedBookLoans() {
-      const start = (this.currentPage - 1) * this.pageSize;
-      const end = start + this.pageSize;
-      return this.bookLoans.slice(start, end);
+      if (this.filteredBookLoans.length > 0) {
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return this.filteredBookLoans.slice(start, end);
+      } else {
+        return [];
+      }
     }
   },
 
@@ -157,6 +163,7 @@ export default {
           }
         );
         this.bookLoans = response.data.data;
+        this.applyFilter();
       } catch (error) {
         this.error = error.response.data.message;
       }
@@ -220,6 +227,25 @@ export default {
           timeout: 2000
         });
       }
+    },
+    applyFilter() {
+      // Filter bookLoans based on the search term
+      this.filteredBookLoans = this.bookLoans.filter((bookLoan) => {
+        const searchTerm = this.search.toLowerCase();
+
+        return (
+          (bookLoan.book_name &&
+            bookLoan.book_name.toLowerCase().includes(searchTerm)) ||
+          (bookLoan.borrower &&
+            bookLoan.borrower.toLowerCase().includes(searchTerm)) ||
+          (bookLoan.can_date &&
+            bookLoan.can_date.toLowerCase().includes(searchTerm)) ||
+          (bookLoan.return_date &&
+            bookLoan.return_date.toLowerCase().includes(searchTerm)) ||
+          (bookLoan.status &&
+            bookLoan.status.toLowerCase().includes(searchTerm))
+        );
+      });
     }
   },
 

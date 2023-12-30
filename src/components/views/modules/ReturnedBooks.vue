@@ -124,6 +124,36 @@ export default {
         this.errorMessage = error.response.data.message;
       }
     },
+    async deleteBookLoan(id) {
+      try {
+        const token = localStorage.getItem("token");
+
+        let response = await axios.delete(`${this.api}/bookloans/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 200) {
+          this.successMessage = "Book Loan deleted successfully";
+          iziToast.success({
+            title: "Success",
+            message: this.successMessage,
+            position: "topRight",
+            timeout: 2000
+          });
+          this.getBookLoans();
+        }
+      } catch (error) {
+        console.log(error);
+        iziToast.error({
+          title: "Error",
+          message: error.response.data.message,
+          position: "topRight",
+          timeout: 2000
+        });
+      }
+    },
     changePage(page) {
       this.currentPage = page;
       this.getBookLoans();

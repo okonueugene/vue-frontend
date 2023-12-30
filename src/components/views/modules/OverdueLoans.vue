@@ -92,6 +92,8 @@ export default {
       overdueBookLoans: [],
       currentPage: 1,
       pageSize: 5,
+      errorMessage: "",
+      successMessage: "",
       api: import.meta.env.VITE_APP_API_URL
     };
   },
@@ -118,9 +120,53 @@ export default {
           }
         );
 
-        this.overdueBookLoans = response.data.data;
+        if (response.status === 200) {
+          this.overdueBookLoans = response.data.data;
+          iziToast.success({
+            title: "Success",
+            message: this.response.data.message,
+            position: "topRight",
+            timeout: 2000
+          });
+        }
       } catch (error) {
         console.log(error);
+        iziToast.error({
+          title: "Error",
+          message: error.response.data.message,
+          position: "topRight",
+          timeout: 2000
+        });
+      }
+    },
+    async deleteBookLoan(id) {
+      try {
+        const token = localStorage.getItem("token");
+
+        let response = await axios.delete(`${this.api}/bookloans/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 200) {
+          this.successMessage = "Book Loan deleted successfully";
+          iziToast.success({
+            title: "Success",
+            message: this.successMessage,
+            position: "topRight",
+            timeout: 2000
+          });
+          this.getBookLoans();
+        }
+      } catch (error) {
+        console.log(error);
+        iziToast.error({
+          title: "Error",
+          message: error.response.data.message,
+          position: "topRight",
+          timeout: 2000
+        });
       }
     },
     changePage(page) {
