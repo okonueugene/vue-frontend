@@ -90,8 +90,22 @@ export default {
         );
 
         if (response.status === 200) {
-          localStorage.removeItem("isAuthenticated");
-          localStorage.removeItem("token");
+          console.log(
+            localStorage.getItem("isAuthenticated"),
+            localStorage.getItem("token"),
+            localStorage.getItem("user"),
+            localStorage.getItem("role"),
+            localStorage.getItem("books")
+          );
+          //clear local storage
+          localStorage.clear();
+          console.log(
+            localStorage.getItem("isAuthenticated"),
+            localStorage.getItem("token"),
+            localStorage.getItem("user"),
+            localStorage.getItem("role"),
+            localStorage.getItem("books")
+          );
           this.$router.push("/");
         } else {
           this.error = response.data.message;

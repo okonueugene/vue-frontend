@@ -127,7 +127,6 @@ export default {
 
         this.pendingBookLoans = response.data.data;
       } catch (error) {
-        console.log(error);
         this.errorMessage = error.response.data.message;
       }
     },
@@ -169,7 +168,6 @@ export default {
           timeout: 2000
         });
       } catch (error) {
-        console.log(error);
         this.errorMessage = error.response.data.message;
         this.displayErrorMessage();
       }
@@ -196,7 +194,6 @@ export default {
           timeout: 2000
         });
       } catch (error) {
-        console.log(error);
         this.errorMessage = error.response.data.message;
         this.displayErrorMessage();
       }

@@ -121,7 +121,6 @@ export default {
 
         this.approvedBookLoans = response.data.data;
       } catch (error) {
-        console.log(error);
         this.errorMessage = error.response.data.message;
       }
     },
@@ -147,7 +146,6 @@ export default {
           this.applyFilter();
         }
       } catch (error) {
-        console.log(error);
         iziToast.error({
           title: "Error",
           message: error.response.data.message,

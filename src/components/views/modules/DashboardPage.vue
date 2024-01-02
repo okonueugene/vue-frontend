@@ -122,6 +122,7 @@ a {
                       :src="getImageUrl(book)"
                       class="card-img-top"
                       :alt="getMediaFileName(book)"
+                      loading="lazy"
                     />
                     <span>
                       <a href="javascript:void(0)" @click="viewBook(book.id)">{{
@@ -141,6 +142,7 @@ a {
                     :src="getImageUrl(book)"
                     class="card-img-top"
                     :alt="getMediaFileName(book)"
+                    loading="lazy"
                   />
 
                   <span>
@@ -165,6 +167,7 @@ a {
                     :src="getImageUrl(book)"
                     class="card-img-top"
                     :alt="getMediaFileName(book)"
+                    loading="lazy"
                   />
                   <span>
                     <a href="javascript:void(0)" @click="viewBook(book.id)">{{
@@ -188,6 +191,7 @@ a {
                     :src="getImageUrl(book)"
                     class="card-img-top"
                     :alt="getMediaFileName(book)"
+                    loading="lazy"
                   />
                   <span>
                     <a href="javascript:void(0)" @click="viewBook(book.id)">{{
@@ -206,6 +210,7 @@ a {
                     :src="getImageUrl(book)"
                     class="card-img-top"
                     :alt="getMediaFileName(book)"
+                    loading="lazy"
                   />
                   <span>
                     <a href="javascript:void(0)" @click="viewBook(book.id)">{{
@@ -233,11 +238,15 @@ a {
 
 <script>
 import axios from "axios";
+import _ from "lodash";
 
 export default {
   data() {
     return {
       books: [],
+      favouriteBooks: [],
+      recentlyReadBooks: [],
+      reccomendedBooks: [],
       search: "",
       user: JSON.parse(localStorage.getItem("user")),
       filteredBooks: [],
@@ -250,91 +259,56 @@ export default {
   },
 
   created() {
-    this.fetchBooks();
-    this.displayErrorMessage();
+    this.initializeData();
   },
+
   computed: {
     newBooks() {
       //sort by id from highest to lowest
       return this.books.sort((a, b) => b.id - a.id).slice(0, 4);
-    },
-    favouriteBooks() {
-      //use fisher yates shuffle algorithm
-      let books = this.books;
-      let currentIndex = books.length,
-        temporaryValue,
-        randomIndex;
-
-      // While there remain elements to shuffle...
-      while (0 !== currentIndex) {
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element
-        temporaryValue = books[currentIndex];
-        books[currentIndex] = books[randomIndex];
-        books[randomIndex] = temporaryValue;
-      }
-
-      return books.slice(0, 4);
-    },
-    recentlyReadBooks() {
-      //use fisher yates shuffle algorithm
-      let books = this.books;
-      let currentIndex = books.length,
-        temporaryValue,
-        randomIndex;
-
-      // While there remain elements to shuffle...
-      while (0 !== currentIndex) {
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element
-        temporaryValue = books[currentIndex];
-        books[currentIndex] = books[randomIndex];
-        books[randomIndex] = temporaryValue;
-      }
-
-      return books.slice(0, 4);
-    },
-    reccomendedBooks() {
-      //use fisher yates shuffle algorithm
-      let books = this.books;
-      let currentIndex = books.length,
-        temporaryValue,
-        randomIndex;
-
-      // While there remain elements to shuffle...
-      while (0 !== currentIndex) {
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element
-        temporaryValue = books[currentIndex];
-        books[currentIndex] = books[randomIndex];
-        books[randomIndex] = temporaryValue;
-      }
-
-      return books.slice(0, 4);
     }
   },
   watch: {
-    search(newValue, oldValue) {
+    search: _.debounce(function (newValue, oldValue) {
       if (newValue.length >= 4) {
         this.onSubmit();
       }
-    }
+    }, 1000)
   },
   methods: {
+    async initializeData() {
+      await this.fetchBooks();
+      this.shuffleBooks();
+      this.displayErrorMessage();
+    },
+    shuffleBooks() {
+      //use fisher yates shuffle algorithm
+      let books = this.books;
+      let currentIndex = books.length,
+        temporaryValue,
+        randomIndex;
+
+      // While there remain elements to shuffle...
+      while (0 !== currentIndex) {
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element
+        temporaryValue = books[currentIndex];
+        books[currentIndex] = books[randomIndex];
+        books[randomIndex] = temporaryValue;
+      }
+
+      //populate favouriteBooks, recentlyReadBooks, reccomendedBooks
+      this.favouriteBooks = books.slice(0, 4);
+      this.recentlyReadBooks = books.slice(5, 9);
+      this.reccomendedBooks = books.slice(10, 14);
+    },
     getImageUrl(book) {
       // Check if the image property is null, use media property instead
       return (
-        book.image ||
-        (book.media.length > 0 ? this.cleanMediaUrl(book.media) : null)
+        book.image || (book.media.length > 0 && this.cleanMediaUrl(book.media))
       );
     },
     getMediaFileName(book) {
@@ -342,14 +316,10 @@ export default {
       return book.image ? book.image : book.name;
     },
     cleanMediaUrl(mediaUrl) {
-      // Define the regex pattern to match the part you want to replace
-      let pattern = /http:\/\/localhost\/storage\//;
-
-      // Define the replacement string (the part you want to replace it with)
-      let replacement = this.files + "/storage/";
-
-      // Use replace to replace the matched part with the replacement
-      return mediaUrl.replace(pattern, replacement);
+      return mediaUrl.replace(
+        /^http:\/\/localhost\/storage\//,
+        this.files + "/storage/"
+      );
     },
     async onSubmit() {
       try {
@@ -358,7 +328,6 @@ export default {
         const token = localStorage.getItem("token");
 
         if (this.search.length >= 4) {
-          // If search is not empty, call the API to search for books
           const url = `${this.api}/books/search/${this.search}`;
           const response = await axios.get(url, {
             headers: {
@@ -368,6 +337,7 @@ export default {
 
           if (response.status === 200) {
             this.filteredBooks = response.data.data;
+
             iziToast.success({
               title: "Success",
               message: "Search results fetched successfully",
@@ -395,29 +365,36 @@ export default {
         this.loading = true;
 
         const token = localStorage.getItem("token");
+        const cachedBooks = localStorage.getItem("cachedBooks");
 
-        var url = this.api + "/books";
-        console.log(url);
-
-        const response = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        if (response.status === 200) {
-          this.books = response.data.data;
-          iziToast.success({
-            title: "Success",
-            message: "Books fetched successfully",
-            position: "topRight",
-            timeout: 2000
-          });
+        if (cachedBooks) {
+          this.books = JSON.parse(cachedBooks);
         } else {
-          console.error(
-            `Fetch books failed with status code ${response.status}`
-          );
-          this.errorMessage = response.data.message;
+          const url = this.api + "/books";
+          const response = await axios.get(url, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          if (response.status === 200) {
+            this.books = response.data.data;
+
+            // Cache the fetched books
+            localStorage.setItem("cachedBooks", JSON.stringify(this.books));
+
+            iziToast.success({
+              title: "Success",
+              message: "Books fetched successfully",
+              position: "topRight",
+              timeout: 2000
+            });
+          } else {
+            console.error(
+              `Fetch books failed with status code ${response.status}`
+            );
+            this.errorMessage = response.data.message;
+          }
         }
       } catch (error) {
         console.error("Failed to fetch books:", error.message);

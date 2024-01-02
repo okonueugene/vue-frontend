@@ -166,7 +166,7 @@ export default {
         this.applyFilter();
       } catch (error) {
         this.error = error.response.data.message;
-        console.log(error);
+        this.displayErrorMessage();
       }
     },
     displayErrorMessage() {
@@ -204,7 +204,6 @@ export default {
         this.fetchBookLoans();
         this.applyFilter();
       } catch (error) {
-        console.log(error);
         // Display error message
         iziToast.error({
           title: "Error",

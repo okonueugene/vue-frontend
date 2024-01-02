@@ -125,7 +125,6 @@ export default {
 
         if (response.status === 200) {
           this.book = response.data.data;
-          console.log("book", this.book);
         } else {
           console.error(
             `Fetch book details failed with status code ${response.status}`
@@ -169,7 +168,6 @@ export default {
         }
       } catch (error) {
         console.error("Failed to fetch book details:", error.message);
-        console.log(error.response.data.message);
         this.errorMessage = error.response.data.message;
       }
     }

@@ -123,13 +123,11 @@ export default {
           password: this.password,
           password_confirmed: this.password_confirmed
         });
-        console.log(response);
         this.$router.push("/");
       } catch (error) {
         if (error.response.data.email_address) {
           this.errorMessage = error.response.data.email[0];
         } else {
-          console.log(error.response.data);
           this.errorMessage = error.response.data.message;
         }
       }

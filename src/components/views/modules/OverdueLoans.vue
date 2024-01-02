@@ -135,7 +135,6 @@ export default {
           });
         }
       } catch (error) {
-        console.log(error);
         iziToast.error({
           title: "Error",
           message: error.response.data.message,
@@ -165,7 +164,6 @@ export default {
           this.getBookLoans();
         }
       } catch (error) {
-        console.log(error);
         iziToast.error({
           title: "Error",
           message: error.response.data.message,

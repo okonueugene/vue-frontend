@@ -303,7 +303,6 @@ export default {
 
         if (response.status === 200) {
           this.subcategories = response.data.data.subcategories;
-          console.log(this.subcategories);
         } else {
           console.error(
             `Failed to fetch subcategories with status code ${response.status}`

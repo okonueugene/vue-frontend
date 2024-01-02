@@ -111,7 +111,6 @@ export default {
       try {
         const token = localStorage.getItem("token");
         let url = `${this.api}/roles`;
-        console.log(url);
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -125,7 +124,6 @@ export default {
           this.errorMessage = this.error;
         }
       } catch (error) {
-        console.log(error);
         this.error = error.response.data.message;
         this.errorMessage = this.error;
       }

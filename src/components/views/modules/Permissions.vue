@@ -121,9 +121,7 @@ export default {
         } else {
           this.error = response.data.message;
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   },
   mounted() {

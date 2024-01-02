@@ -46,13 +46,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-if="sub_categories.length === 0">
-                      <td class="text-center" colspan="3">
-                        No Sub-Categories found
-                      </td>
-                    </tr>
                     <tr v-if="pagedSubCategories.length === 0">
-                      <td class="text-center" colspan="3">
+                      <td class="text-center" colspan="4">
                         No Sub-Categories found
                       </td>
                     </tr>

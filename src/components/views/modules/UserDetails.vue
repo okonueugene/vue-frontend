@@ -247,7 +247,6 @@ export default {
       try {
         const token = localStorage.getItem("token");
         let url = `${this.api}/users`;
-        // console.log("url", url);
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -270,7 +269,6 @@ export default {
       try {
         const token = localStorage.getItem("token");
         let url = `${this.api}/users/${id}`;
-        console.log("url", url);
 
         const response = await axios.delete(url, {
           headers: {
@@ -279,7 +277,6 @@ export default {
         });
 
         if (response.status === 200) {
-          console.log("response", response);
           // Remove the deleted user from the users array
           this.users = this.users.filter((user) => user.id !== id);
 
@@ -297,7 +294,6 @@ export default {
       } catch (error) {
         this.error = error.response.data.message;
         this.errorMessage = error.response.data.message;
-        console.log("error", error);
       }
     },
 
@@ -338,7 +334,6 @@ export default {
       try {
         const token = localStorage.getItem("token");
         let url = `${this.api}/roles`;
-        // console.log("url", url);
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${token}`

@@ -185,7 +185,6 @@ export default {
             }
           }
         );
-        console.log(response);
 
         this.fetchBookLoans();
         iziToast.success({
